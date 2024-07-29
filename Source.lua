@@ -165,7 +165,7 @@ function Library:Window(args)
 	Navigation.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Navigation.BorderSizePixel = 0
 	Navigation.Size = UDim2.new(0, 150, 0, 330)
-	Navigation.Visible = false
+	Navigation.Visible = true
 	Navigation.ZIndex = 2
 	Navigation.Image = "rbxassetid://1633616921"
 	Navigation.ImageColor3 = Color3.fromRGB(26, 26, 26)
