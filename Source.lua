@@ -58,7 +58,9 @@ function Library:GetVersion()
 end
 
 Library._Window = nil
+
 local LoadedVersion = Library:GetVersion()
+local NotifiedVersion = false
 
 function Library:Window(args)
 	args = Library:Validate({
@@ -74,14 +76,6 @@ function Library:Window(args)
 
 	Library._Window = This
 	local Minimized = false
-
-	coroutine.wrap(function()
-		while task.wait(5) do
-			if LoadedVersion ~= Library:GetVersion() then
-				warn("Ui library has updated from version: "..LoadedVersion.." to: "..Library:GetVersion())
-			end
-		end
-	end)()
 
 	--Gui to lua stuff
 	local MainFrame = Instance.new("Frame")
@@ -173,8 +167,8 @@ function Library:Window(args)
 	Navigation.BackgroundTransparency = 1.000
 	Navigation.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Navigation.BorderSizePixel = 0
-	Navigation.Size = UDim2.new(0, 150, 0, 330)
-	Navigation.Visible = false
+	Navigation.Size = UDim2.new(0, 0, 0, 330) -- UDim2.new(0, 150, 0, 330)
+	Navigation.Visible = true
 	Navigation.ZIndex = 2
 	Navigation.Image = "rbxassetid://1633616921"
 	Navigation.ImageColor3 = Color3.fromRGB(26, 26, 26)
@@ -195,7 +189,7 @@ function Library:Window(args)
 	UIListLayout_Layout.Name = "UIListLayout_Layout"
 	UIListLayout_Layout.Parent = Layout
 	UIListLayout_Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	UIListLayout_Layout.SortOrder = Enum.SortOrder.LayoutOrder
+	UIListLayout_Layout.SortOrder = Enum.SortOrder.LayoutOrder 
 	UIListLayout_Layout.Padding = UDim.new(0, 5)
 
 	UICornerNavigation_2.CornerRadius = UDim.new(0, 4)
@@ -215,7 +209,7 @@ function Library:Window(args)
 	TabButtonTemplate.Text = ""
 	TabButtonTemplate.TextColor3 = Color3.fromRGB(0, 0, 0)
 	TabButtonTemplate.TextSize = 14.000
-	
+
 	UIStrokeTestCircleButton.Name = "UIStrokeTestCircleButton"
 	UIStrokeTestCircleButton.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	UIStrokeTestCircleButton.Color = Color3.fromRGB(20,20,20)
@@ -227,7 +221,7 @@ function Library:Window(args)
 	UiCornerTestCircleButton.Name = "UiCornerTestCircleButton"
 	UiCornerTestCircleButton.Parent = TabButtonTemplate
 
-	TemplateTabButtonImage.Name = "TemplateTabButtonImage"
+	TemplateTabButtonImage.Name = "TestTabButtonImage"
 	TemplateTabButtonImage.Parent = TabButtonTemplate
 	TemplateTabButtonImage.AnchorPoint = Vector2.new(0.5, 0.5)
 	TemplateTabButtonImage.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
@@ -278,10 +272,11 @@ function Library:Window(args)
 	Version.Position = UDim2.new(0.576666653, 0, 0.963636339, 0)
 	Version.Size = UDim2.new(0, 29, 0, 12)
 	Version.Font = Enum.Font.GothamBold
-	Version.Text = "v "..Library:GetVersion()
+	Version.Text = "v "
 	Version.TextColor3 = Color3.fromRGB(100, 100, 100)
 	Version.TextSize = 10.000
 	Version.TextXAlignment = Enum.TextXAlignment.Left
+	Version.TextTransparency = 1
 
 	SettingsImage_2.Name = "SettingsImage"
 	SettingsImage_2.Parent = Navigation
@@ -293,6 +288,7 @@ function Library:Window(args)
 	SettingsImage_2.Position = UDim2.new(0.0500000007, 0, 0.975757599, 0)
 	SettingsImage_2.Size = UDim2.new(0, 15, 0, 15)
 	SettingsImage_2.Image = "rbxassetid://14958963046"
+	SettingsImage_2.ImageTransparency = 1
 	SettingsImage_2.ImageColor3 = Color3.fromRGB(200, 200, 200)
 
 	UiCornerSettingsImage_2.CornerRadius = UDim.new(0, 100)
@@ -535,7 +531,92 @@ function Library:Window(args)
 	UICornerTabHolder.Name = "UICornerTabHolder"
 	UICornerTabHolder.Parent = TabHolder
 
-	UiTools.MakeDraggable(DragBar, MainFrame, 0.05)
+	local NavTweenOpen = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 150, 0, 330)})
+	local NavTweenClose = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 0, 0, 330)})
+
+	NavTweenOpen:Play()
+	NavTweenOpen.Completed:Connect(function()
+		Library:tween(Version, {TextTransparency = 0})
+		Library:tween(SettingsImage_2, {ImageTransparency = 0})
+	end)
+
+	-- All other hover stuffs
+	do
+		Version.MouseEnter:Connect(function()
+			Library:tween(Version, {TextColor3 = Color3.fromRGB(200,200,200)})
+		end)
+
+		Version.MouseLeave:Connect(function()
+			Library:tween(Version, {TextColor3 = Color3.fromRGB(100,100,100)})
+		end)
+
+		Title.MouseEnter:Connect(function()
+			Library:tween(Title, {TextColor3 = Color3.fromRGB(255,255,255)})
+		end)
+
+		Title.MouseLeave:Connect(function()
+			Library:tween(Title, {TextColor3 = Color3.fromRGB(200,200,200)})
+		end)
+
+		SettingsImage_2.MouseEnter:Connect(function()
+			Library:tween(SettingsImage_2, {ImageColor3 = Color3.fromRGB(255,255,255)})
+		end)
+
+		SettingsImage_2.MouseLeave:Connect(function()
+			Library:tween(SettingsImage_2, {ImageColor3 = Color3.fromRGB(200,200,200)})
+		end)
+	end
+
+	local completed
+
+	function This:OpenNav()
+		NavTweenOpen:Play()
+
+		completed = NavTweenOpen.Completed:Connect(function()
+			for i,v in pairs(Layout:GetDescendants()) do
+				if not string.find(v.Name, "Template") then
+					if v:IsA("ImageLabel") then
+						Library:tween(v, {ImageTransparency = 0})
+					elseif v:IsA("TextLabel") then
+						Library:tween(v, {TextTransparency = 0})
+					elseif v:IsA("TextButton") then
+						Library:tween(v, {TextTransparency = 0})
+						Library:tween(v, {BackgroundTransparency = 0})
+					elseif v:IsA("UIStroke") then
+						Library:tween(v, {Transparency = 0})
+					elseif v:IsA("Frame") then
+						Library:tween(v, {Transparency = 0})
+					end
+				end
+			end
+
+			completed:Disconnect()
+			completed = nil
+		end)
+	end
+
+	function This:CloseNav()
+		Library:tween(Version, {TextTransparency = 1})
+		Library:tween(SettingsImage_2, {ImageTransparency = 1})
+
+		for i,v in pairs(Layout:GetDescendants()) do
+			if v:IsA("ImageLabel") then
+				Library:tween(v, {ImageTransparency = 1})
+			elseif v:IsA("TextLabel") then
+				Library:tween(v, {TextTransparency = 1})
+			elseif v:IsA("TextButton") then
+				Library:tween(v, {TextTransparency = 1})
+				Library:tween(v, {BackgroundTransparency = 1})
+			elseif v:IsA("UIStroke") then
+				Library:tween(v, {Transparency = 1})
+			elseif v:IsA("Frame") then
+				Library:tween(v, {Transparency = 1})
+			end
+		end
+
+		task.wait(.21)
+		NavTweenClose:Play()
+	end
 
 	function This:Tab(args)
 		args = Library:Validate({
@@ -550,7 +631,9 @@ function Library:Window(args)
 
 		local TabButton = TabButtonTemplate:Clone()
 		local TabFrame = TemplateTab:Clone()
-		local Icon = TabButton.TemplateTabButtonImage
+		local Icon = TabButton.TestTabButtonImage
+
+		repeat wait() until Navigation.Size == UDim2.new(0, 150, 0, 330)
 
 		TabFrame.Name = "Tab "..args.Text
 		TabButton.Name = args.Text
@@ -560,6 +643,8 @@ function Library:Window(args)
 		TabButton.Parent = Navigation.Layout
 		TabFrame.Parent = TabHolder
 		TabButton.Visible = true
+
+		TabButton.TestTabButtonImage.Name = TabButton.Name.." TabButtonImage"
 
 		function Tab:Activate()
 			if not Tab.Active then
