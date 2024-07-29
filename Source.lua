@@ -58,6 +58,7 @@ function Library:GetVersion()
 end
 
 Library._Window = nil
+local LoadedVersion = Library:GetVersion()
 
 function Library:Window(args)
 	args = Library:Validate({
@@ -73,6 +74,14 @@ function Library:Window(args)
 
 	Library._Window = This
 	local Minimized = false
+
+	coroutine.wrap(function()
+		while task.wait(5) do
+			if LoadedVersion ~= Library:GetVersion() then
+				warn("Ui library has updated from version: "..LoadedVersion.." to: "..Library:GetVersion())
+			end
+		end
+	end)()
 
 	--Gui to lua stuff
 	local MainFrame = Instance.new("Frame")
@@ -321,7 +330,7 @@ function Library:Window(args)
 	TabHolder.BorderSizePixel = 0
 	TabHolder.Position = UDim2.new(0.0186915882, 0, 0.087878786, 0)
 	TabHolder.Size = UDim2.new(0, 514, 0, 291)
-	TabHolder.Visible = false
+	TabHolder.Visible = true
 
 	TemplateTab.Name = "TemplateTab"
 	TemplateTab.Parent = TabHolder
@@ -332,6 +341,7 @@ function Library:Window(args)
 	TemplateTab.Position = UDim2.new(-0.000763770659, 0, -0.00146830454, 0)
 	TemplateTab.Size = UDim2.new(0, 514, 0, 291)
 	TemplateTab.Visible = false
+	TemplateTab.ScrollBarImageColor3 = Color3.fromRGB(11,11,11)
 	TemplateTab.ScrollBarThickness = 5
 
 	UIListLayout.Parent = TemplateTab
@@ -560,6 +570,7 @@ function Library:Window(args)
 				Tab.Active = true
 				TabFrame.Visible = true
 
+				Library:tween(TabButton.TextTabButton, {TextColor = Color3.fromRGB(255,255,255)})
 				Library:tween(TabButton.TextTabButton.Active_Frame, {Transparency = 0})
 
 				This.CurrentTabName = TabFrame.Name
@@ -581,24 +592,28 @@ function Library:Window(args)
 		TabButton.MouseEnter:Connect(function()
 			Tab.Hover = true
 
+			Library:tween(TabButton.TextTabButton, {TextColor = Color3.fromRGB(255,255,255)})
 			Library:tween(TabButton.UIStrokeTestCircleButton, {Color = Color3.fromRGB(88,88,88)})
 		end)
 
 		TabButton.TextTabButton.MouseEnter:Connect(function()
 			Tab.Hover = true
 
+			Library:tween(TabButton.TextTabButton, {TextColor = Color3.fromRGB(255,255,255)})
 			Library:tween(TabButton.UIStrokeTestCircleButton, {Color = Color3.fromRGB(88,88,88)})
 		end)
 
 		TabButton.MouseLeave:Connect(function()
 			Tab.Hover = false
 
+			Library:tween(TabButton.TextTabButton, {TextColor = Color3.fromRGB(200,200,200)})
 			Library:tween(TabButton.UIStrokeTestCircleButton, {Color = Color3.fromRGB(20,20,20)})
 		end)
 
 		TabButton.TextTabButton.MouseLeave:Connect(function()
 			Tab.Hover = false
 
+			Library:tween(TabButton.TextTabButton, {TextColor = Color3.fromRGB(200,200,200)})
 			Library:tween(TabButton.UIStrokeTestCircleButton, {Color = Color3.fromRGB(20,20,20)})
 		end)
 
