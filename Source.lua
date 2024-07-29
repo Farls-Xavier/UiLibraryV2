@@ -264,6 +264,7 @@ function Library:Window(args)
 	UICornerTabBtnTemplate.Parent = TextTabButton
 
 	Active_Frame.Name = "Active_Frame"
+	Active_Frame.Visible = false
 	Active_Frame.Parent = TextTabButton
 	Active_Frame.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
 	Active_Frame.BackgroundTransparency = 1.000
@@ -576,57 +577,6 @@ function Library:Window(args)
 		end)
 	end
 
-	local completed
-
-	function This:OpenNav()
-		NavTweenOpen:Play()
-
-		completed = NavTweenOpen.Completed:Connect(function()
-			for i,v in pairs(Layout:GetDescendants()) do
-				if not string.find(v.Name, "Template") then
-					if v:IsA("ImageLabel") then
-						Library:tween(v, {ImageTransparency = 0})
-					elseif v:IsA("TextLabel") then
-						Library:tween(v, {TextTransparency = 0})
-					elseif v:IsA("TextButton") then
-						Library:tween(v, {TextTransparency = 0})
-						Library:tween(v, {BackgroundTransparency = 0})
-					elseif v:IsA("UIStroke") then
-						Library:tween(v, {Transparency = 0})
-					elseif v:IsA("Frame") then
-						Library:tween(v, {Transparency = 0})
-					end
-				end
-			end
-
-			completed:Disconnect()
-			completed = nil
-		end)
-	end
-
-	function This:CloseNav()
-		Library:tween(Version, {TextTransparency = 1})
-		Library:tween(SettingsImage_2, {ImageTransparency = 1})
-
-		for i,v in pairs(Layout:GetDescendants()) do
-			if v:IsA("ImageLabel") then
-				Library:tween(v, {ImageTransparency = 1})
-			elseif v:IsA("TextLabel") then
-				Library:tween(v, {TextTransparency = 1})
-			elseif v:IsA("TextButton") then
-				Library:tween(v, {TextTransparency = 1})
-				Library:tween(v, {BackgroundTransparency = 1})
-			elseif v:IsA("UIStroke") then
-				Library:tween(v, {Transparency = 1})
-			elseif v:IsA("Frame") then
-				Library:tween(v, {Transparency = 1})
-			end
-		end
-
-		task.wait(.21)
-		NavTweenClose:Play()
-	end
-
 	function This:Tab(args)
 		args = Library:Validate({
 			Text = "Tab",
@@ -647,6 +597,7 @@ function Library:Window(args)
 		TabFrame.Name = "Tab "..args.Text
 		TabButton.Name = args.Text
 		TabButton.TextTabButton.Text = args.Text
+		TabButton.TextTabButton.Active_Frame.Visible = true
 		Icon.Image = args.Icon
 
 		TabButton.Parent = Navigation.Layout
