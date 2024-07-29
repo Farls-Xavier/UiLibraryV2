@@ -77,6 +77,15 @@ function Library:Window(args)
 	Library._Window = This
 	local Minimized = false
 
+	coroutine.wrap(function()
+		while task.wait(5) do
+			if LoadedVersion ~= Library:GetVersion() and NotifiedVersion ~= true then
+				NotifiedVersion = true
+				printColor("Ui library has updated from version: "..LoadedVersion.." to: "..Library:GetVersion(), Color3.fromRGB(97, 85, 165))
+			end
+		end	
+	end)()
+
 	--Gui to lua stuff
 	local MainFrame = Instance.new("Frame")
 	local DropShadowHolder = Instance.new("Frame")
@@ -272,7 +281,7 @@ function Library:Window(args)
 	Version.Position = UDim2.new(0.576666653, 0, 0.963636339, 0)
 	Version.Size = UDim2.new(0, 29, 0, 12)
 	Version.Font = Enum.Font.GothamBold
-	Version.Text = "v "
+	Version.Text = "v "..Library:GetVersion()
 	Version.TextColor3 = Color3.fromRGB(100, 100, 100)
 	Version.TextSize = 10.000
 	Version.TextXAlignment = Enum.TextXAlignment.Left
