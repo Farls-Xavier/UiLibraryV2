@@ -174,7 +174,7 @@ function Library:Window(args)
 	Navigation.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Navigation.BorderSizePixel = 0
 	Navigation.Size = UDim2.new(0, 150, 0, 330)
-	Navigation.Visible = true
+	Navigation.Visible = false
 	Navigation.ZIndex = 2
 	Navigation.Image = "rbxassetid://1633616921"
 	Navigation.ImageColor3 = Color3.fromRGB(26, 26, 26)
@@ -570,7 +570,7 @@ function Library:Window(args)
 				Tab.Active = true
 				TabFrame.Visible = true
 
-				Library:tween(TabButton.TextTabButton, {TextColor = Color3.fromRGB(255,255,255)})
+				Library:tween(TabButton.TextTabButton, {TextColor3 = Color3.fromRGB(255,255,255)})
 				Library:tween(TabButton.TextTabButton.Active_Frame, {Transparency = 0})
 
 				This.CurrentTabName = TabFrame.Name
@@ -592,28 +592,28 @@ function Library:Window(args)
 		TabButton.MouseEnter:Connect(function()
 			Tab.Hover = true
 
-			Library:tween(TabButton.TextTabButton, {TextColor = Color3.fromRGB(255,255,255)})
+			Library:tween(TabButton.TextTabButton, {TextColor3 = Color3.fromRGB(255,255,255)})
 			Library:tween(TabButton.UIStrokeTestCircleButton, {Color = Color3.fromRGB(88,88,88)})
 		end)
 
 		TabButton.TextTabButton.MouseEnter:Connect(function()
 			Tab.Hover = true
 
-			Library:tween(TabButton.TextTabButton, {TextColor = Color3.fromRGB(255,255,255)})
+			Library:tween(TabButton.TextTabButton, {TextColor3 = Color3.fromRGB(255,255,255)})
 			Library:tween(TabButton.UIStrokeTestCircleButton, {Color = Color3.fromRGB(88,88,88)})
 		end)
 
 		TabButton.MouseLeave:Connect(function()
 			Tab.Hover = false
 
-			Library:tween(TabButton.TextTabButton, {TextColor = Color3.fromRGB(200,200,200)})
+			Library:tween(TabButton.TextTabButton, {TextColor3 = Color3.fromRGB(200,200,200)})
 			Library:tween(TabButton.UIStrokeTestCircleButton, {Color = Color3.fromRGB(20,20,20)})
 		end)
 
 		TabButton.TextTabButton.MouseLeave:Connect(function()
 			Tab.Hover = false
 
-			Library:tween(TabButton.TextTabButton, {TextColor = Color3.fromRGB(200,200,200)})
+			Library:tween(TabButton.TextTabButton, {TextColor3 = Color3.fromRGB(200,200,200)})
 			Library:tween(TabButton.UIStrokeTestCircleButton, {Color = Color3.fromRGB(20,20,20)})
 		end)
 
