@@ -49,13 +49,12 @@ function module.MakeDraggable(topbarobject, object, smoothFactor)
 		end
 	)
 
-	game:GetService("UserInputService").InputChanged:Connect(
-		function(input)
-			if input == DragInput and Dragging then
-				Update(input)
-			end
+	game:GetService("UserInputService").InputChanged:Connect(function(input)
+		if input == DragInput and Dragging then
+			Update(input)
 		end
+	end
 	)
 end
 
-returm module
+return module
