@@ -136,6 +136,9 @@ function Library:Window(args)
 	local UICornerCheckHolder = Instance.new("UICorner")
 	local UICornerTabHolder = Instance.new("UICorner")
 
+	--TEMP 
+	local ToggleNviagaton = Instance.new("TextButton")
+
 	MainFrame.Name = "MainFrame"
 	MainFrame.Parent = ScreenGui
 	MainFrame.AnchorPoint = Vector2.new(1, 0.5)
@@ -144,6 +147,17 @@ function Library:Window(args)
 	MainFrame.BorderSizePixel = 0
 	MainFrame.Position = UDim2.new(0.747136831, 0, 0.513513505, 0)
 	MainFrame.Size = UDim2.new(0, 535, 0, 330)
+
+	--TEMP
+	ToggleNviagaton.Name = "ToggleNviagaton"
+	ToggleNviagaton.Parent = MainFrame
+	ToggleNviagaton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ToggleNviagaton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ToggleNviagaton.BorderSizePixel = 0
+	ToggleNviagaton.Position = UDim2.new(0.78878504, 0, 0.0121212117, 0)
+	ToggleNviagaton.Size = UDim2.new(0, 50, 0, 20)
+	ToggleNviagaton.Font = Enum.Font.SourceSans
+	ToggleNviagaton.TextColor3 = Color3
 
 	DropShadowHolder.Name = "DropShadowHolder"
 	DropShadowHolder.Parent = MainFrame
@@ -541,6 +555,9 @@ function Library:Window(args)
 	UICornerTabHolder.Name = "UICornerTabHolder"
 	UICornerTabHolder.Parent = TabHolder
 
+	UiTools.MakeDraggable(DragBar, MainFrame, 0.07)
+	
+	local NavOpen = true
 	local NavTweenOpen = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 150, 0, 330)})
 	local NavTweenClose = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 0, 0, 330)})
 
@@ -549,7 +566,71 @@ function Library:Window(args)
 		Library:tween(Version, {TextTransparency = 0})
 		Library:tween(SettingsImage_2, {ImageTransparency = 0})
 	end)
+	
+	function This:CloseNavigation()
+		Library:tween(Version, {TextTransparency = 1})
+		Library:tween(SettingsImage_2, {ImageTransparency = 1})
 
+		for i,v in pairs(Layout:GetChildren()) do
+			if not string.find(v.Name:lower(), "template") then
+				if v:IsA("TextButton") then
+					Library:tween(v, {BackgroundTransparency = 1})
+					Library:tween(v.TextTabButton.Active_Frame, {BackgroundTransparency = 1})
+					for _,vv in pairs(v:GetChildren()) do
+						if vv:IsA("UIStroke") then
+							Library:tween(vv, {Transparency = 1})
+						elseif vv:IsA("TextButton") then
+							Library:tween(vv, {BackgroundTransparency = 1})
+							Library:tween(vv, {TextTransparency = 1})
+						elseif vv:IsA("ImageLabel") then
+							Library:tween(vv, {ImageTransparency = 1}, function()
+								NavTweenClose:Play()
+							end)
+						end
+					end
+				end
+			end
+		end
+	end
+	
+	function This:OpenNavigation()
+		NavTweenOpen:Play()
+		NavTweenOpen.Completed:Connect(function()
+			Library:tween(Version, {TextTransparency = 0})
+			Library:tween(SettingsImage_2, {ImageTransparency = 0})
+			
+			for i,v in pairs(Layout:GetChildren()) do
+				if not string.find(v.Name:lower(), "template") then
+					if v:IsA("TextButton") then
+						Library:tween(v, {BackgroundTransparency = 0})
+						if v.Name == This.CurrentTabName then
+							Library:tween(v.TextTabButton.Active_Frame, {BackgroundTransparency = 0})
+						end
+						for _,vv in pairs(v:GetChildren()) do
+							if vv:IsA("UIStroke") then
+								Library:tween(vv, {Transparency = 0})
+							elseif vv:IsA("TextButton") then
+								Library:tween(vv, {BackgroundTransparency = 0})
+								Library:tween(vv, {TextTransparency = 0})
+							elseif vv:IsA("ImageLabel") then
+								Library:tween(vv, {ImageTransparency = 0})
+							end
+						end
+					end
+				end
+			end
+		end)
+	end
+
+	ToggleNviagaton.Activated:Connect(function()
+		if NavOpen then
+			This:CloseNavigation()
+		else
+			This:OpenNavigation()
+		end
+		NavOpen = not NavOpen
+	end)
+	
 	-- All other hover stuffs
 	do
 		Version.MouseEnter:Connect(function()
