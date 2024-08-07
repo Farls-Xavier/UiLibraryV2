@@ -1182,14 +1182,14 @@ function Library:Window(args)
 
 			return ImageLabel 
 		end
-
+		
 		function Tab:Keybind(args)
 			args = Library:Validate({
 				Text = "  Keybind",
 				Keybind = Enum.KeyCode.One,
 				Callback = function() end
 			}, args or {})
-			
+
 			local Keybind = {
 				Hover = false,
 				MouseDown = false,
@@ -1199,7 +1199,7 @@ function Library:Window(args)
 				DoingTextAnimation = false,
 				Connection = nil
 			}
-			
+
 			local keys = {
 				[Enum.KeyCode.One] = "1",
 				[Enum.KeyCode.Two] = "2",
@@ -1218,25 +1218,30 @@ function Library:Window(args)
 				[Enum.KeyCode.Semicolon] = ";",
 				[Enum.KeyCode.Return] = "ENT",
 				[Enum.KeyCode.Quote] = "'",
-				[Enum.KeyCode.LeftAlt] = "LAlT"
+				[Enum.KeyCode.LeftAlt] = "LALT",
+				[Enum.KeyCode.LeftShift] = "LSHIFT",
+				[Enum.KeyCode.RightAlt] = "RALT",
+				[Enum.KeyCode.RightShift] = "RSHIFT"
 			}
-			
+
 			local RenderedKeybind = TemplateBind:Clone()
 			RenderedKeybind.Parent = TabFrame.Holder
 			RenderedKeybind.Visible = true
 			RenderedKeybind.TextLabelTemplateBind.Text = "  "..args.Text
 			RenderedKeybind.Name = args.Text
 			RenderedKeybind.BindText.Text = keys[args.Keybind] or args.Keybind.Name
-			
+
 			RenderedKeybind.MouseEnter:Connect(function()
+				if NavOpen then return end
+
 				Keybind.Hover = true
-				
+
 				if not Keybind.MouseDown then
 					Library:tween(RenderedKeybind.UiStrokeTemplateBind, {Transparency = 0})
 					Library:tween(RenderedKeybind.TextLabelTemplateBind, {TextColor3 = Color3.fromRGB(255,255,255)})
 				end
 			end)
-			
+
 			RenderedKeybind.MouseLeave:Connect(function()
 				Keybind.Hover = false
 
@@ -1245,43 +1250,46 @@ function Library:Window(args)
 					Library:tween(RenderedKeybind.TextLabelTemplateBind, {TextColor3 = Color3.fromRGB(200,200,200)})
 				end
 			end)
-			
+
 			RenderedKeybind.BindText.MouseEnter:Connect(function()
+				if NavOpen then return end
+
 				Keybind.BindTextHover = true
 				Library:tween(RenderedKeybind.BindText, {TextColor3 = Color3.fromRGB(255,255,255)})
 			end)
-			
+
 			RenderedKeybind.BindText.MouseLeave:Connect(function()
 				Keybind.BindTextHover = false
 				Library:tween(RenderedKeybind.BindText, {TextColor3 = Color3.fromRGB(200,200,200)}) 
 			end)
-			
+
 			UserInputService.InputBegan:Connect(function(input)
 				if input.KeyCode == Keybind.Key and not Keybind.SettingKey then
 					args.Callback()
 				end
 			end)
-						
-			UserInputService.InputBegan:Connect(function(input)				
+
+			UserInputService.InputBegan:Connect(function(input)	
+				if NavOpen then return end
 				if input.UserInputType == Enum.UserInputType.MouseButton1 and Keybind.BindTextHover and not Keybind.DoingTextAnimation then
 					Keybind.DoingTextAnimation = true
 					Library:tween(RenderedKeybind.BindText, {TextTransparency = 1}, function()
 						Library:tween(RenderedKeybind.BindText, {TextTransparency = 0})
 						RenderedKeybind.BindText.Text = "..."
 						Keybind.DoingTextAnimation = false
-						
+
 						Keybind.SettingKey = true
-						
+
 						Keybind.Connection = UserInputService.InputBegan:Connect(function(inp)
 							if keys[inp.KeyCode] then
 								RenderedKeybind.BindText.Text = keys[inp.KeyCode]
 							else
 								RenderedKeybind.BindText.Text = inp.KeyCode.Name
 							end
-							
+
 							Keybind.Key = inp.KeyCode
 							args.Keybind = inp.KeyCode
-							
+
 							task.delay(.1, function()
 								Keybind.SettingKey = false
 								Keybind.Connection:Disconnect()
@@ -1291,16 +1299,10 @@ function Library:Window(args)
 					end)
 				end
 			end)
-			
+
 			return Keybind
 		end
-
-		function Tab:Label(args)
-			args = Library:Validate({
-				Text = "  Label",
-			}, args or {})
-		end
-
+		
 		function Tab:Player(args)
 			args = Library:Validate({
 				Player = nil
@@ -1328,6 +1330,20 @@ function Library:Window(args)
 				RenderedPlayer.TextLabelTemplatePlayerInfoUid.Text = "  "..args.Player.UserId
 			end
 			
+			RenderedPlayer.MouseEnter:Connect(function()
+				if NavOpen then return end
+
+				Library:tween(RenderedPlayer.UiStrokeTemplatePlayerInfo, {Transparency = 0})
+				Library:tween(RenderedPlayer, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
+			end)
+			
+			RenderedPlayer.MouseLeave:Connect(function()
+				if NavOpen then return end
+
+				Library:tween(RenderedPlayer.UiStrokeTemplatePlayerInfo, {Transparency = 1})
+				Library:tween(RenderedPlayer, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
+			end)
+			
 			RenderedPlayer.TargetSelect.MouseEnter:Connect(function()
 				PlayerInfo.TargetHover = true
 				
@@ -1353,6 +1369,8 @@ function Library:Window(args)
 			end)
 			
 			UserInputService.InputBegan:Connect(function(input)
+				if NavOpen then return end
+
 				if input.UserInputType == Enum.UserInputType.MouseButton1 and PlayerInfo.TargetHover then
 					This.TargetPlayer = args.Player
 				end
@@ -1392,13 +1410,6 @@ function Library:Window(args)
 				
 				RenderedPlayer.TextLabelTemplatePlayerInfoPing.Text = Health.."%"
 				RenderedPlayer.HealthImage.ImageColor3 = color
-			end)
-
-			game.Players.PlayerRemoving:Connect(function(player)
-				if player == args.Player then
-					RenderedPlayer:Destroy()
-					HealthSet:Disconnect()
-				end
 			end)
 			
 			return PlayerInfo
