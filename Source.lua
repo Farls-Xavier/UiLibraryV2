@@ -157,8 +157,9 @@ function Library:Window(args)
 	local UICornerTemplatePlayerInfo = Instance.new("UICorner")
 	local PlayerImage = Instance.new("ImageLabel")
 	local TextLabelTemplatePlayerInfoPing = Instance.new("TextLabel")
-	local WifiImage = Instance.new("ImageLabel")
+	local HealthImage = Instance.new("ImageLabel")
 	local TargetSelect = Instance.new("ImageLabel")
+	local Spectate = Instance.new("ImageLabel")
 	local TextLabelTemplatePlayerInfoUid = Instance.new("TextLabel")
 	local UiCornerPlayerImage = Instance.new("UICorner")
 	local UIStrokeTemplateToggle = Instance.new("UIStroke")
@@ -319,7 +320,7 @@ function Library:Window(args)
 	Version.Position = UDim2.new(0.576666653, 0, 0.963636339, 0)
 	Version.Size = UDim2.new(0, 29, 0, 12)
 	Version.Font = Enum.Font.GothamBold
-	Version.Text = "v 1.0.0"
+	Version.Text = "v "..Library:GetVersion()
 	Version.TextColor3 = Color3.fromRGB(100, 100, 100)
 	Version.TextSize = 10.000
 	Version.TextXAlignment = Enum.TextXAlignment.Left
@@ -681,15 +682,26 @@ function Library:Window(args)
 	TargetSelect.Image = "rbxassetid://13850779421"
 	TargetSelect.ImageColor3 = Color3.fromRGB(200, 200, 200)
 
-	WifiImage.Name = "WifiImage"
-	WifiImage.Parent = TemplatePlayerInfo
-	WifiImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	WifiImage.BackgroundTransparency = 1.000
-	WifiImage.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	WifiImage.BorderSizePixel = 0
-	WifiImage.Position = UDim2.new(0.00997010991, 0, 0.720000029, 0)
-	WifiImage.Size = UDim2.new(0, 12, 0, 12)
-	WifiImage.Image = "rbxassetid://14966937158"
+	HealthImage.Name = "HealthImage"
+	HealthImage.Parent = TemplatePlayerInfo
+	HealthImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	HealthImage.BackgroundTransparency = 1.000
+	HealthImage.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	HealthImage.BorderSizePixel = 0
+	HealthImage.Position = UDim2.new(0.00997010991, 0, 0.720000029, 0)
+	HealthImage.Size = UDim2.new(0, 12, 0, 12)
+	HealthImage.Image = "rbxassetid://13868090844"
+	
+	Spectate.Name = "Spectate"
+	Spectate.Parent = TemplatePlayerInfo
+	Spectate.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Spectate.BackgroundTransparency = 1.000
+	Spectate.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Spectate.BorderSizePixel = 0
+	Spectate.Position = UDim2.new(0.885676324, 0, 0.439999998, 0)
+	Spectate.Size = UDim2.new(0, 20, 0, 20)
+	Spectate.Image = "rbxassetid://13847974326"
+	Spectate.ImageColor3 = Color3.fromRGB(200, 200, 200)
 	
 	UIStrokeTemplateToggle.Name = "UIStrokeTemplateToggle"
 	UIStrokeTemplateToggle.Parent = TemplateToggle
@@ -1295,7 +1307,8 @@ function Library:Window(args)
 			}, args or {})
 			
 			local PlayerInfo = {
-				TargetHover = false
+				TargetHover = false,
+				SpectateHover = false
 			}
 			
 			local RenderedPlayer = TemplatePlayerInfo:Clone()
@@ -1327,14 +1340,65 @@ function Library:Window(args)
 				Library:tween(RenderedPlayer.TargetSelect, {ImageColor3 = Color3.fromRGB(200,200,200)})
 			end)
 			
+			RenderedPlayer.Spectate.MouseEnter:Connect(function()
+				PlayerInfo.SpectateHover = true
+
+				Library:tween(RenderedPlayer.Spectate, {ImageColor3 = Color3.fromRGB(255,255,255)})
+			end)
+
+			RenderedPlayer.Spectate.MouseLeave:Connect(function()
+				PlayerInfo.SpectateHover = false
+
+				Library:tween(RenderedPlayer.Spectate, {ImageColor3 = Color3.fromRGB(200,200,200)})
+			end)
+			
 			UserInputService.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 and PlayerInfo.TargetHover then
 					This.TargetPlayer = args.Player
 				end
+				
+				if input.UserInputType == Enum.UserInputType.MouseButton1 and PlayerInfo.SpectateHover then
+					if not args.Player.Character then
+						return
+					end
+
+					if workspace.CurrentCamera.CameraSubject ~= Player.Character.Humanoid then
+						workspace.CurrentCamera.CameraSubject = Player.Character.Humanoid
+					else
+						workspace.CurrentCamera.CameraSubject = args.Player.Character:WaitForChild("Humanoid")
+					end
+				end
 			end)
 			
-			local PingSet = RenderStepped(function()
-				RenderedPlayer.TextLabelTemplatePlayerInfoPing.Text = Library:GetPlayerPing(args.Player).." ms"
+			local HealthSet = RenderStepped(function()
+				if not args.Player.Character then
+					RenderedPlayer.TextLabelTemplatePlayerInfoPing.Text = "N/A"
+					RenderedPlayer.HealthImage.ImageColor3 = Color3.fromRGB(200,200,200)
+					return
+				end
+				
+				local Health = math.floor(args.Player.Character:WaitForChild("Humanoid").Health)
+				
+				local color
+				if Health >= 70 then
+					color = Color3.fromRGB(0, 255, 0)
+				elseif Health >= 50 then
+					color = Color3.fromRGB(255, 255, 0)
+				elseif Health >= 30 then
+					color = Color3.fromRGB(255, 179, 0)
+				else
+					color = Color3.fromRGB(255, 0, 0)
+				end
+				
+				RenderedPlayer.TextLabelTemplatePlayerInfoPing.Text = Health.."%"
+				RenderedPlayer.HealthImage.ImageColor3 = color
+			end)
+
+			game.Players.PlayerRemoving:Connect(function(player)
+				if player == args.Player then
+					RenderedPlayer:Destroy()
+					HealthSet:Disconnect()
+				end
 			end)
 			
 			return PlayerInfo
