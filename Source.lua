@@ -33,6 +33,15 @@ RefrenceValue.Value = "Reference Value"
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
+local RenderSteps = {}
+
+local function RenderStepped(func)
+	local Connection = RunService.RenderStepped:Connect(func)
+	table.insert(RenderSteps, Connection)
+
+	return Connection
+end
+
 function Library:Validate(defaults, args)
 	for i,v in pairs(defaults) do
 		if args[i] == nil then
@@ -57,6 +66,10 @@ function Library:GetVersion()
 	return game:HttpGet(Library.url.."version.txt")
 end
 
+function Library:GetPlayerPing(plr)
+	return math.round(plr:GetNetworkPing())
+end
+
 Library._Window = nil
 
 local LoadedVersion = Library:GetVersion()
@@ -71,7 +84,7 @@ function Library:Window(args)
 	local This = {
 		CurrentTab = nil,
 		CurrentTabName = nil,
-		SelectedTarget = nil
+		TargetPlayer = nil
 	}
 
 	Library._Window = This
@@ -139,8 +152,18 @@ function Library:Window(args)
 	local CheckmarkImage = Instance.new("ImageLabel")
 	local UICornerCheckHolder = Instance.new("UICorner")
 	local UICornerTabHolder = Instance.new("UICorner")
+	local TemplatePlayerInfo = Instance.new("Frame")
+	local TextLabelTemplatePlayerInfo = Instance.new("TextLabel")
+	local UICornerTemplatePlayerInfo = Instance.new("UICorner")
+	local PlayerImage = Instance.new("ImageLabel")
+	local TextLabelTemplatePlayerInfoPing = Instance.new("TextLabel")
+	local WifiImage = Instance.new("ImageLabel")
+	local TargetSelect = Instance.new("ImageLabel")
+	local TextLabelTemplatePlayerInfoUid = Instance.new("TextLabel")
+	local UiCornerPlayerImage = Instance.new("UICorner")
 	local UIStrokeTemplateToggle = Instance.new("UIStroke")
 	local UiStrokeTemplateImage = Instance.new("UIStroke")
+	local UiStrokeTemplateBind = Instance.new("UIStroke")
 
 	MainFrame.Name = "MainFrame"
 	MainFrame.Parent = ScreenGui
@@ -570,6 +593,46 @@ function Library:Window(args)
 	CheckmarkImage.Size = UDim2.new(1, 0, 1, 0)
 	CheckmarkImage.Image = "rbxassetid://13846852950"
 	CheckmarkImage.ImageTransparency = 1.000
+	
+	TemplatePlayerInfo.Name = "TemplatePlayerInfo"
+	TemplatePlayerInfo.Parent = game.StarterGui.NewGui.MainFrame.TabHolder.TemplateTab
+	TemplatePlayerInfo.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	TemplatePlayerInfo.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplatePlayerInfo.BorderSizePixel = 0
+	TemplatePlayerInfo.Position = UDim2.new(0, 0, 0.656357408, 0)
+	TemplatePlayerInfo.Size = UDim2.new(0, 177, 0, 50)
+	TemplatePlayerInfo.Visible = false
+
+	TextLabelTemplatePlayerInfo.Name = "TextLabelTemplatePlayerInfo"
+	TextLabelTemplatePlayerInfo.Parent = TemplatePlayerInfo
+	TextLabelTemplatePlayerInfo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabelTemplatePlayerInfo.BackgroundTransparency = 1.000
+	TextLabelTemplatePlayerInfo.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabelTemplatePlayerInfo.BorderSizePixel = 0
+	TextLabelTemplatePlayerInfo.Position = UDim2.new(0.169491529, 0, 0, 0)
+	TextLabelTemplatePlayerInfo.Size = UDim2.new(0, 147, 0, 22)
+	TextLabelTemplatePlayerInfo.Font = Enum.Font.GothamMedium
+	TextLabelTemplatePlayerInfo.Text = "  Farleyy"
+	TextLabelTemplatePlayerInfo.TextColor3 = Color3.fromRGB(200, 200, 200)
+	TextLabelTemplatePlayerInfo.TextSize = 16.000
+	TextLabelTemplatePlayerInfo.TextXAlignment = Enum.TextXAlignment.Left
+
+	UICornerTemplatePlayerInfo.CornerRadius = UDim.new(0, 6)
+	UICornerTemplatePlayerInfo.Name = "UICornerTemplatePlayerInfo"
+	UICornerTemplatePlayerInfo.Parent = TemplatePlayerInfo
+
+	PlayerImage.Name = "PlayerImage"
+	PlayerImage.Parent = TemplatePlayerInfo
+	PlayerImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	PlayerImage.BackgroundTransparency = 1.000
+	PlayerImage.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	PlayerImage.BorderSizePixel = 0
+	PlayerImage.Size = UDim2.new(0, 30, 0, 30)
+	PlayerImage.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+	
+	UiCornerPlayerImage.Name = "UiCornerPlayerImage"
+	UiCornerPlayerImage.CornerRadius = UDim.new(0,4)
+	UiCornerPlayerImage.Parent = PlayerImage
 
 	UICornerCheckHolder.CornerRadius = UDim.new(0, 5)
 	UICornerCheckHolder.Name = "UICornerCheckHolder"
@@ -579,19 +642,75 @@ function Library:Window(args)
 	UICornerTabHolder.Name = "UICornerTabHolder"
 	UICornerTabHolder.Parent = TabHolder
 	
+	TextLabelTemplatePlayerInfoUid.Name = "TextLabelTemplatePlayerInfoUid"
+	TextLabelTemplatePlayerInfoUid.Parent = TemplatePlayerInfo
+	TextLabelTemplatePlayerInfoUid.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabelTemplatePlayerInfoUid.BackgroundTransparency = 1.000
+	TextLabelTemplatePlayerInfoUid.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabelTemplatePlayerInfoUid.BorderSizePixel = 0
+	TextLabelTemplatePlayerInfoUid.Position = UDim2.new(0.19929944, 0, 0.260000001, 0)
+	TextLabelTemplatePlayerInfoUid.Size = UDim2.new(0, 141, 0, 22)
+	TextLabelTemplatePlayerInfoUid.Font = Enum.Font.GothamMedium
+	TextLabelTemplatePlayerInfoUid.Text = "  123456789"
+	TextLabelTemplatePlayerInfoUid.TextColor3 = Color3.fromRGB(200, 200, 200)
+	TextLabelTemplatePlayerInfoUid.TextSize = 9.000
+	TextLabelTemplatePlayerInfoUid.TextXAlignment = Enum.TextXAlignment.Left
+	
+	TextLabelTemplatePlayerInfoPing.Name = "TextLabelTemplatePlayerInfoPing"
+	TextLabelTemplatePlayerInfoPing.Parent = TemplatePlayerInfo
+	TextLabelTemplatePlayerInfoPing.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabelTemplatePlayerInfoPing.BackgroundTransparency = 1.000
+	TextLabelTemplatePlayerInfoPing.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabelTemplatePlayerInfoPing.BorderSizePixel = 0
+	TextLabelTemplatePlayerInfoPing.Position = UDim2.new(0.100000001, 0, 0.779999971, 0)
+	TextLabelTemplatePlayerInfoPing.Size = UDim2.new(0, 16, 0, 6)
+	TextLabelTemplatePlayerInfoPing.Font = Enum.Font.GothamMedium
+	TextLabelTemplatePlayerInfoPing.Text = "50 ms"
+	TextLabelTemplatePlayerInfoPing.TextColor3 = Color3.fromRGB(200, 200, 200)
+	TextLabelTemplatePlayerInfoPing.TextSize = 9.000
+	TextLabelTemplatePlayerInfoPing.TextXAlignment = Enum.TextXAlignment.Left
+	
+	TargetSelect.Name = "TargetSelect"
+	TargetSelect.Parent = TemplatePlayerInfo
+	TargetSelect.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TargetSelect.BackgroundTransparency = 1.000
+	TargetSelect.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TargetSelect.BorderSizePixel = 0
+	TargetSelect.Position = UDim2.new(0.885676324, 0, 0, 0)
+	TargetSelect.Size = UDim2.new(0, 20, 0, 20)
+	TargetSelect.Image = "rbxassetid://13850779421"
+	TargetSelect.ImageColor3 = Color3.fromRGB(200, 200, 200)
+
+	WifiImage.Name = "WifiImage"
+	WifiImage.Parent = TemplatePlayerInfo
+	WifiImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	WifiImage.BackgroundTransparency = 1.000
+	WifiImage.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	WifiImage.BorderSizePixel = 0
+	WifiImage.Position = UDim2.new(0.00997010991, 0, 0.720000029, 0)
+	WifiImage.Size = UDim2.new(0, 12, 0, 12)
+	WifiImage.Image = "rbxassetid://14966937158"
+	
 	UIStrokeTemplateToggle.Name = "UIStrokeTemplateToggle"
-	UIStrokeTemplateToggle.Parent = TemplateButton
+	UIStrokeTemplateToggle.Parent = TemplateToggle
 	UIStrokeTemplateToggle.Thickness = 1
 	UIStrokeTemplateToggle.Transparency = 1
 	UIStrokeTemplateToggle.LineJoinMode = Enum.LineJoinMode.Round
 	UIStrokeTemplateToggle.Color = Color3.fromRGB(67,67,67)
-
+	
 	UiStrokeTemplateImage.Name = "UiStrokeTemplateImage"
 	UiStrokeTemplateImage.Parent = TemplateImage
 	UiStrokeTemplateImage.Thickness = 1
 	UiStrokeTemplateImage.Transparency = 1
 	UiStrokeTemplateImage.LineJoinMode = Enum.LineJoinMode.Round
 	UiStrokeTemplateImage.Color = Color3.fromRGB(67,67,67)
+	
+	UiStrokeTemplateBind.Name = "UiStrokeTemplateBind"
+	UiStrokeTemplateBind.Parent = TemplateBind
+	UiStrokeTemplateBind.Thickness = 1
+	UiStrokeTemplateBind.Transparency = 1
+	UiStrokeTemplateBind.LineJoinMode = Enum.LineJoinMode.Round
+	UiStrokeTemplateBind.Color = Color3.fromRGB(67,67,67)
 
 	UiTools.MakeDraggable(DragBar, MainFrame, 0.07)
 	
@@ -1050,6 +1169,175 @@ function Library:Window(args)
 			end)
 
 			return ImageLabel 
+		end
+
+		function Tab:Keybind(args)
+			args = Library:Validate({
+				Text = "  Keybind",
+				Keybind = Enum.KeyCode.One,
+				Callback = function() end
+			}, args or {})
+			
+			local Keybind = {
+				Hover = false,
+				MouseDown = false,
+				Key = args.Keybind,
+				BindTextHover = false,
+				SettingKey = false,
+				DoingTextAnimation = false,
+				Connection = nil
+			}
+			
+			local keys = {
+				[Enum.KeyCode.One] = "1",
+				[Enum.KeyCode.Two] = "2",
+				[Enum.KeyCode.Three] = "3",
+				[Enum.KeyCode.Four] = "4",
+				[Enum.KeyCode.Five] = "5",
+				[Enum.KeyCode.Six] = "6",
+				[Enum.KeyCode.Seven] = "7",
+				[Enum.KeyCode.Eight] = "8",
+				[Enum.KeyCode.Nine] = "9",
+				[Enum.KeyCode.Zero] = "0",
+				[Enum.KeyCode.Period] = ".",
+				[Enum.KeyCode.Slash] = "/",
+				[Enum.KeyCode.BackSlash] = "\\",
+				[Enum.KeyCode.Insert] = "INS",
+				[Enum.KeyCode.Semicolon] = ";",
+				[Enum.KeyCode.Return] = "ENT",
+				[Enum.KeyCode.Quote] = "'",
+				[Enum.KeyCode.LeftAlt] = "LAlT"
+			}
+			
+			local RenderedKeybind = TemplateBind:Clone()
+			RenderedKeybind.Parent = TabFrame.Holder
+			RenderedKeybind.Visible = true
+			RenderedKeybind.TextLabelTemplateBind.Text = "  "..args.Text
+			RenderedKeybind.Name = args.Text
+			RenderedKeybind.BindText.Text = keys[args.Keybind] or args.Keybind.Name
+			
+			RenderedKeybind.MouseEnter:Connect(function()
+				Keybind.Hover = true
+				
+				if not Keybind.MouseDown then
+					Library:tween(RenderedKeybind.UiStrokeTemplateBind, {Transparency = 0})
+					Library:tween(RenderedKeybind.TextLabelTemplateBind, {TextColor3 = Color3.fromRGB(255,255,255)})
+				end
+			end)
+			
+			RenderedKeybind.MouseLeave:Connect(function()
+				Keybind.Hover = false
+
+				if not Keybind.MouseDown then
+					Library:tween(RenderedKeybind.UiStrokeTemplateBind, {Transparency = 1})
+					Library:tween(RenderedKeybind.TextLabelTemplateBind, {TextColor3 = Color3.fromRGB(200,200,200)})
+				end
+			end)
+			
+			RenderedKeybind.BindText.MouseEnter:Connect(function()
+				Keybind.BindTextHover = true
+				Library:tween(RenderedKeybind.BindText, {TextColor3 = Color3.fromRGB(255,255,255)})
+			end)
+			
+			RenderedKeybind.BindText.MouseLeave:Connect(function()
+				Keybind.BindTextHover = false
+				Library:tween(RenderedKeybind.BindText, {TextColor3 = Color3.fromRGB(200,200,200)}) 
+			end)
+			
+			UserInputService.InputBegan:Connect(function(input)
+				if input.KeyCode == Keybind.Key and not Keybind.SettingKey then
+					args.Callback()
+				end
+			end)
+						
+			UserInputService.InputBegan:Connect(function(input)				
+				if input.UserInputType == Enum.UserInputType.MouseButton1 and Keybind.BindTextHover and not Keybind.DoingTextAnimation then
+					Keybind.DoingTextAnimation = true
+					Library:tween(RenderedKeybind.BindText, {TextTransparency = 1}, function()
+						Library:tween(RenderedKeybind.BindText, {TextTransparency = 0})
+						RenderedKeybind.BindText.Text = "..."
+						Keybind.DoingTextAnimation = false
+						
+						Keybind.SettingKey = true
+						
+						Keybind.Connection = UserInputService.InputBegan:Connect(function(inp)
+							if keys[inp.KeyCode] then
+								RenderedKeybind.BindText.Text = keys[inp.KeyCode]
+							else
+								RenderedKeybind.BindText.Text = inp.KeyCode.Name
+							end
+							
+							Keybind.Key = inp.KeyCode
+							args.Keybind = inp.KeyCode
+							
+							task.delay(.1, function()
+								Keybind.SettingKey = false
+								Keybind.Connection:Disconnect()
+								Keybind.Connection = nil
+							end)
+						end)
+					end)
+				end
+			end)
+			
+			return Keybind
+		end
+
+		function Tab:Label(args)
+			args = Library:Validate({
+				Text = "  Label",
+			}, args or {})
+		end
+
+		function Tab:Player(args)
+			args = Library:Validate({
+				Player = nil
+			}, args or {})
+			
+			local PlayerInfo = {
+				TargetHover = false
+			}
+			
+			local RenderedPlayer = TemplatePlayerInfo:Clone()
+			RenderedPlayer.Parent = TabFrame.Holder
+			RenderedPlayer.Visible = true
+			RenderedPlayer.Name = args.Player.Name.."_"..args.Player.UserId
+			RenderedPlayer.PlayerImage.Image = Players:GetUserThumbnailAsync(args.Player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+			RenderedPlayer.TextLabelTemplatePlayerInfo.Text = "  "..args.Player.DisplayName
+			RenderedPlayer.TextLabelTemplatePlayerInfoUid.Text = "  "..args.Player.UserId
+			
+			function PlayerInfo:SetPlayer(player)
+				args.Player = player
+				
+				RenderedPlayer.Name = args.Player.Name.."_"..args.Player.UserId
+				RenderedPlayer.PlayerImage.Image = Players:GetUserThumbnailAsync(args.Player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+				RenderedPlayer.TextLabelTemplatePlayerInfo.Text = "  "..args.Player.DisplayName
+				RenderedPlayer.TextLabelTemplatePlayerInfoUid.Text = "  "..args.Player.UserId
+			end
+			
+			RenderedPlayer.TargetSelect.MouseEnter:Connect(function()
+				PlayerInfo.TargetHover = true
+				
+				Library:tween(RenderedPlayer.TargetSelect, {ImageColor3 = Color3.fromRGB(255,255,255)})
+			end)
+			
+			RenderedPlayer.TargetSelect.MouseLeave:Connect(function()
+				PlayerInfo.TargetHover = false
+
+				Library:tween(RenderedPlayer.TargetSelect, {ImageColor3 = Color3.fromRGB(200,200,200)})
+			end)
+			
+			UserInputService.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 and PlayerInfo.TargetHover then
+					This.TargetPlayer = args.Player
+				end
+			end)
+			
+			local PingSet = RenderStepped(function()
+				RenderedPlayer.TextLabelTemplatePlayerInfoPing.Text = Library:GetPlayerPing(args.Player).." ms"
+			end)
+			
+			return PlayerInfo
 		end
 		
 		return Tab
