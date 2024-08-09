@@ -599,7 +599,7 @@ function Library:Window(args)
 	CheckmarkImage.ImageTransparency = 1.000
 	
 	TemplatePlayerInfo.Name = "TemplatePlayerInfo"
-	TemplatePlayerInfo.Parent = TabHolder.TemplateTab
+	TemplatePlayerInfo.Parent = TemplateTab
 	TemplatePlayerInfo.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
 	TemplatePlayerInfo.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	TemplatePlayerInfo.BorderSizePixel = 0
