@@ -87,7 +87,7 @@ function module.Init()
     ChatBox.PlaceholderColor3 = Color3.fromRGB(200, 200, 200)
     ChatBox.PlaceholderText = "/ or press me to start chatting"
     ChatBox.Text = ""
-    ChatBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+    ChatBox.TextColor3 = Color3.fromRGB(200,200,200)
     ChatBox.TextSize = 15.000
 
     MessageHolder.Name = "MessageHolder"
@@ -136,13 +136,20 @@ function module.Init()
     ChatBox.FocusLost:Connect(function(enterPressed)
         if enterPressed then
             module.SendMessage(ChatBox.Text, "All")
+            RenderMessage(Players.LocalPlayer, ChatBox.Text)
         end
     end)
 
-    TCS.MessageReceived:Connect(function(textChatMessage:TextChatMessage)
+    for i,v in pairs(Players:GetPlayers()) do
+        v.Chatted:Connect(function(message)
+            RenderMessage(v, message)
+        end)
+    end
+
+    --[[TCS.MessageReceived:Connect(function(textChatMessage:TextChatMessage)
         local player = Players:GetPlayerByUserId(textChatMessage.TextSource.UserId)
         RenderMessage(player, textChatMessage.Text)
-    end)
+    end)]]
 end
 
 return module
