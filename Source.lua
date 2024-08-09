@@ -9,20 +9,21 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
-local ConfigDecode = HttpService:JSONDecode(readfile("@FarlsXavier\\UiConfig.json"))
+local Config = HttpService:JSONDecode(readfile("@FarlsXavier\\UiConfig.json"))
 local UiTools = loadstring(game:HttpGet(Library.url.."UiTools.lua"))()
 local ChatModule = loadstring(game:HttpGet(Library.url.."ChatModule.lua"))()
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
 for i,v in pairs(game.CoreGui:GetDescendants()) do
-	if v:IsA("StringValue") and v.Name == "ReferenceValue" then
+	if v:IsA("StringValue") and v.Name == "ReferenceValue" and v.Parent.Name == "UiLibUi" then
 		warn("DELETING OLD SCRIPT(IF NOT RIGHT THEN TELL ME)")
 		v.Parent:Destroy()
 	end
 end
 
 local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "UiLibUi"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = RunService:IsStudio() and Player.PlayerGui or game.CoreGui
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -65,10 +66,6 @@ end
 
 function Library:GetVersion()
 	return game:HttpGet(Library.url.."version.txt")
-end
-
-function Library:GetPlayerPing(plr)
-	return math.round(plr:GetNetworkPing())
 end
 
 Library._Window = nil
@@ -168,6 +165,7 @@ function Library:Window(args)
 	local UIStrokeTemplateToggle = Instance.new("UIStroke")
 	local UiStrokeTemplateImage = Instance.new("UIStroke")
 	local UiStrokeTemplateBind = Instance.new("UIStroke")
+	local UiStrokeTemplatePlayerInfo = Instance.new("UIStroke")
 
 	MainFrame.Name = "MainFrame"
 	MainFrame.Parent = ScreenGui
@@ -726,6 +724,13 @@ function Library:Window(args)
 	UiStrokeTemplateBind.Transparency = 1
 	UiStrokeTemplateBind.LineJoinMode = Enum.LineJoinMode.Round
 	UiStrokeTemplateBind.Color = Color3.fromRGB(67,67,67)
+	
+	UiStrokeTemplatePlayerInfo.Name = "UiStrokeTemplatePlayerInfo"
+	UiStrokeTemplatePlayerInfo.Parent = TemplatePlayerInfo
+	UiStrokeTemplatePlayerInfo.Thickness = 1
+	UiStrokeTemplatePlayerInfo.Transparency = 1
+	UiStrokeTemplatePlayerInfo.LineJoinMode = Enum.LineJoinMode.Round
+	UiStrokeTemplatePlayerInfo.Color = Color3.fromRGB(67,67,67)
 
 	UiTools.MakeDraggable(DragBar, MainFrame, 0.07)
 	
