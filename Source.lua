@@ -11,6 +11,7 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local ConfigDecode = HttpService:JSONDecode(readfile("@FarlsXavier\\UiConfig.json"))
 local UiTools = loadstring(game:HttpGet(Library.url.."UiTools.lua"))()
+local ChatModule = loadstring(game:HttpGet(Library.url.."ChatModule.lua"))()
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
@@ -86,6 +87,8 @@ function Library:Window(args)
 		CurrentTabName = nil,
 		TargetPlayer = nil
 	}
+
+	ChatModule.Init()
 
 	Library._Window = This
 	local Minimized = false
@@ -1175,7 +1178,7 @@ function Library:Window(args)
 					Library:tween(RenderedImageLabel.UiStrokeTemplateImage, {Color = Color3.fromRGB(67, 67, 67)})
 
 					if not ImageLabel.Hover then
-						Library:tween(RenderedImageLabel.UiStrokeTemplateImage, {Transparency = 0})
+						Library:tween(RenderedImageLabel.UiStrokeTemplateImage, {Transparency = 1})
 					end
 				end
 			end)
@@ -1263,13 +1266,14 @@ function Library:Window(args)
 				Library:tween(RenderedKeybind.BindText, {TextColor3 = Color3.fromRGB(200,200,200)}) 
 			end)
 
-			UserInputService.InputBegan:Connect(function(input)
+			UserInputService.InputBegan:Connect(function(input, gpe)
+				if gpe then return end
 				if input.KeyCode == Keybind.Key and not Keybind.SettingKey then
 					args.Callback()
 				end
 			end)
 
-			UserInputService.InputBegan:Connect(function(input)	
+			UserInputService.InputBegan:Connect(function(input, gpe)
 				if NavOpen then return end
 				if input.UserInputType == Enum.UserInputType.MouseButton1 and Keybind.BindTextHover and not Keybind.DoingTextAnimation then
 					Keybind.DoingTextAnimation = true
