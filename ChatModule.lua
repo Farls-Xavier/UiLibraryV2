@@ -27,11 +27,17 @@ function module.SendMessage(Message, Recipent)
     if Message == nil or string.len(Message) == 0 then
         return
     end
-    local args = {
-        [1] = Message,
-        [2] = Recipent,
-    }
-    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(unpack(args))
+    Recipent = Recipent or "All"
+
+    if TCS.ChatVersion == Enum.ChatVersion.LegacyChatService then
+        local args = {
+            [1] = Message,
+            [2] = Recipent,
+        }
+        game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(unpack(args))
+    else
+        TCS:WaitForChild("TextChannels").RBXGeneral:SendAsync(tostring(Message))
+    end
 end
 
 function module.Init()
@@ -137,6 +143,7 @@ function module.Init()
         if enterPressed then
             module.SendMessage(ChatBox.Text, "All")
             RenderMessage(Players.LocalPlayer, ChatBox.Text)
+            ChatBox.Text = ""
         end
     end)
 
@@ -145,11 +152,6 @@ function module.Init()
             RenderMessage(v, message)
         end)
     end
-
-    TCS.MessageReceived:Connect(function(textChatMessage:TextChatMessage)
-        local player = Players:GetPlayerByUserId(textChatMessage.TextSource.UserId)
-        RenderMessage(player, textChatMessage.Text)
-    end)
 end
 
 return module
