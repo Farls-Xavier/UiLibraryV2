@@ -146,10 +146,10 @@ function module.Init()
         end)
     end
 
-    --[[TCS.MessageReceived:Connect(function(textChatMessage:TextChatMessage)
+    TCS.MessageReceived:Connect(function(textChatMessage:TextChatMessage)
         local player = Players:GetPlayerByUserId(textChatMessage.TextSource.UserId)
         RenderMessage(player, textChatMessage.Text)
-    end)]]
+    end)
 end
 
 return module
