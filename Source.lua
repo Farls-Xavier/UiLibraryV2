@@ -11,7 +11,6 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local Config = HttpService:JSONDecode(readfile("@FarlsXavier\\UiConfig.json"))
 local UiTools = loadstring(game:HttpGet(Library.url.."UiTools.lua"))()
-local ChatModule = loadstring(game:HttpGet(Library.url.."ChatModule.lua"))()
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
@@ -85,7 +84,7 @@ function Library:Window(args)
 		TargetPlayer = nil
 	}
 
-	ChatModule.Init()
+	loadstring(game:HttpGet(Library.url.."ChatModule.lua"))():SendSystemMessage("/help for a list of commands")
 
 	Library._Window = This
 	local Minimized = false
