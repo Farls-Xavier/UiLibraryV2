@@ -13,11 +13,23 @@ local function tween(object, goal, speed, callback)
 	tween:Play()
 end
 
+local self = {}
+
 local module = {
 	Messages = {}
 }
 
+module.__index = module
+
+setmetatable(self, module)
+
 game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+
+for i,v in pairs(TextChatService:WaitForChild("TextChatCommands"):GetChildren()) do
+	if v.Name ~= "RBXEmoteCommand" then
+		v.Enabled = false
+	end
+end
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = Players.LocalPlayer.PlayerGui
@@ -45,7 +57,7 @@ BackFrame.BorderSizePixel = 0
 BackFrame.Position = UDim2.new(0.00801974069, 0, 0.0132145705, 0)
 BackFrame.Size = UDim2.new(0, 450, 0, 290)
 
-UICornerBackFrame.CornerRadius = UDim.new(0, 4)
+UICornerBackFrame.CornerRadius = UDim.new(0, 6)
 UICornerBackFrame.Name = "UICornerBackFrame"
 UICornerBackFrame.Parent = BackFrame
 
@@ -112,8 +124,9 @@ TextLabelTemplate.BackgroundTransparency = 1.000
 TextLabelTemplate.BorderColor3 = Color3.fromRGB(255, 255, 255)
 TextLabelTemplate.TextTransparency = 1
 TextLabelTemplate.BorderSizePixel = 0
-TextLabelTemplate.Size = UDim2.new(0, 200, 0, 20)
+TextLabelTemplate.Size = UDim2.new(.95, 0, 0, 15)
 TextLabelTemplate.Font = Enum.Font.GothamMedium
+TextLabelTemplate.TextWrapped = true
 TextLabelTemplate.RichText = true
 TextLabelTemplate.Text = "<font weight=\"bold\"><font face=\"Montserrat\"><font color=\"#EFC3CA\">[Tag]</font></font></font> <font color=\"#FFDE59\">Farleyy</font>: Text Message"
 TextLabelTemplate.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -140,17 +153,21 @@ UICornerGradientHolder.CornerRadius = UDim.new(0, 4)
 UICornerGradientHolder.Name = "UICornerGradientHolder"
 UICornerGradientHolder.Parent = GradientHolder
 
+local Hover = false
+
 BackFrame.MouseEnter:Connect(function()
+	Hover = true
 	tween(GradientHolder, {Transparency = 0})
 	tween(Messages, {ScrollBarImageTransparency = 0})
-	tween(ChatBox, {Transparency = .65})
+	tween(ChatBox, {Transparency = .35})
 	tween(ChatBox, {BackgroundColor3 = Color3.fromRGB(0,0,0)})
 end)
 
 BackFrame.MouseLeave:Connect(function()
-	tween(GradientHolder, {Transparency = 1})
-	tween(Messages, {ScrollBarImageTransparency = 1})
+	Hover = false
 	if not TextBox:IsFocused() then
+		tween(GradientHolder, {Transparency = 1})
+		tween(Messages, {ScrollBarImageTransparency = 1})
 		tween(ChatBox, {Transparency = .970})
 		tween(ChatBox, {BackgroundColor3 = Color3.fromRGB(11,11,11)})
 	end
@@ -208,11 +225,19 @@ function module:FilterMessage(Message, Sender)
 end
 
 function module:ChatTag(Tag, Color)
-	return "<font weight=\"bold\"><font face=\"Montserrat\"><font color=\""..Color.."\">".."["..tostring(Tag).."]</font></font></font>"
+	return "<font weight=\"bold\"><font face=\"Montserrat\"><font color=\""..Color.."\">"..tostring(Tag).."</font></font></font>"
 end
 
+local lastMessagePosition = UDim2.new(0, 0, 0, 0)
+
 function module.RenderMessage(Sender, Message, ChatTag)
-	if Sender:GetAttribute("Muted") == true then return end
+	if string.len(Message) < 1 then
+		print("Not enough text!")
+		return
+	end
+	if Players:FindFirstChild(Sender.Name) then
+		if Sender:GetAttribute("Muted") == true then return end
+	end
 	local Label = TextLabelTemplate:Clone()
 		Label.Name = "Message_"..Sender.UserId
 		Label.Parent = Messages
@@ -222,17 +247,22 @@ function module.RenderMessage(Sender, Message, ChatTag)
 	ChatTag = ChatTag or ""
 	
 	if Sender == Players.LocalPlayer then
-		Label.Text = ChatTag.."<font color=\"#FFDE59\">"..Sender.DisplayName.."</font>: ".."<b>"..tostring(Message).."</b>"
-	elseif Players.LocalPlayer:IsFriendsWith(Sender.UserId) then
-		ChatTag = module:ChatTag("Friend", "#16A085")
-		Label.Text = ChatTag.."<font color=\""..Sender:GetAttribute("TextColor").."\">"..Sender.DisplayName.."</font>: ".."<b>"..tostring(Message).."</b>"
+		Label.Text = ChatTag.."<font color=\"#FFDE59\">"..Sender.DisplayName.."</font>: "..tostring(Message)
 	elseif Sender.Name == "System" then
-		Label.Text = ChatTag..": ".."<b>"..tostring(Message).."</b>"
+		Label.Text = ChatTag..": "..tostring(Message)
+	elseif Players.LocalPlayer:IsFriendsWith(Sender.UserId) then
+		ChatTag = module:ChatTag("F", "#16A085")
+		Label.Text = ChatTag.."<font color=\""..Sender:GetAttribute("TextColor").."\">"..Sender.DisplayName.."</font>: "..tostring(Message)
 	else
-		Label.Text = ChatTag.."<font color=\""..Sender:GetAttribute("TextColor").."\">"..Sender.DisplayName.."</font>: <b>"..tostring(Message).."</b>"
+		Label.Text = ChatTag.."<font color=\""..Sender:GetAttribute("TextColor").."\">"..Sender.DisplayName.."</font>:"..tostring(Message)
 	end
 	
-	tween(Label, {TextTransparency = 0}, .1)
+	if Sender.Name ~= "System" then
+		local textSize = TextService:GetTextSize(Label.Text, Label.TextSize, Label.Font, Vector2.new(Label.AbsoluteSize.X, math.huge))
+		Label.Size = UDim2.new(0, textSize.X, 0, textSize.Y)
+	end
+	
+	tween(Label, {TextTransparency = 0}, .15)
 end
 
 function module:SendSystemMessage(Message)
@@ -241,10 +271,13 @@ function module:SendSystemMessage(Message)
 		DisplayName = "System",
 		UserId = -1
 	}
-	module.RenderMessage(System, Message, module:ChatTag("SYSTEM", "#AAB7B8"))
+	module.RenderMessage(System, Message, module:ChatTag("System", "#AAB7B8"))
 end
 
-function module.SendMessage(Message, Recipent)
+module:SendSystemMessage("/help for a list of commands")
+
+function module.SendMessage(Message, Recipent, Callback)
+	Callback = Callback or function() end
 	--Message = module:FilterMessage(Message, Players.LocalPlayer)
 	if module:GetTextChatVersion() == Enum.ChatVersion.LegacyChatService and string.len(Message) > 0 then
 		local args = {
@@ -255,6 +288,7 @@ function module.SendMessage(Message, Recipent)
 	elseif module:GetTextChatVersion() == Enum.ChatVersion.TextChatService and string.len(TextBox.Text) > 0 then
 		TextChatService:WaitForChild("TextChannels").RBXGeneral:SendAsync(tostring(Message))
 	end
+	Callback()
 end
 
 function module.ConnectPlayerChatEvent(player)
@@ -272,6 +306,7 @@ function module.ConnectPlayerChatEvent(player)
 end
 
 local Commands = {}
+
 function Commands.Clear()
 	for _,v in pairs(module.Messages) do
 		v:Destroy()
@@ -293,38 +328,48 @@ function Commands.Help()
 end
 
 TextBox.Focused:Connect(function()
-	if ChatBox.Transparency ~= .65 then
-		tween(ChatBox, {Transparency = .65})
-	end
-	if ChatBox.BackgroundColor3 ~= Color3.fromRGB(0,0,0) then
-		tween(ChatBox, {BackgroundColor3 = Color3.fromRGB(0,0,0)})
-	end
-	if TextBox.TextTransparency ~= 0 then
-		tween(TextBox, {TextTransparency = 0})
-	end
+	tween(GradientHolder, {Transparency = 0})
+	tween(Messages, {ScrollBarImageTransparency = 0})
+	tween(ChatBox, {Transparency = .35})
+	tween(ChatBox, {BackgroundColor3 = Color3.fromRGB(0,0,0)})
+	tween(TextBox, {TextTransparency = 0})				
 end)
 
 TextBox.FocusLost:Connect(function(ep)
 	tween(ChatBox, {Transparency = .970})
 	tween(ChatBox, {BackgroundColor3 = Color3.fromRGB(11,11,11)})
 	tween(TextBox, {TextTransparency = .44})
-
-	if ep then
+	
+	if Hover == false then
+		tween(GradientHolder, {Transparency = 1})
+	end
+	
+	if ep then	
 		module.SendMessage(TextBox.Text, "All")
 		module.RenderMessage(Players.LocalPlayer, TextBox.Text)
 	end
 	TextBox.Text = ""
 end)
 
-for _,v in pairs(Players:GetPlayers()) do
+local Friends = {}
+
+for i,v in pairs(Players:GetPlayers()) do
+	if Players.LocalPlayer:IsFriendsWith(v.UserId) then
+		table.insert(Friends, v.Name)
+		if #Friends > 0 then
+			module:SendSystemMessage("Friends in server "..table.concat(Friends, ","))
+		end
+	end
 	if v ~= Players.LocalPlayer then
 		module.ConnectPlayerChatEvent(v)
-
 		v:SetAttribute("TextColor", ColorTable[math.random(1, #ColorTable)])
 	end
 end
 
 Players.PlayerAdded:Connect(function(player)
+	if Players.LocalPlayer:IsFriendsWith(player.UserId) then
+		module:SendSystemMessage("Your friend "..player.Name.." joined the server!")
+	end
 	module.ConnectPlayerChatEvent(player)
 	player:SetAttribute("TextColor", ColorTable[math.random(1, #ColorTable)])
 end)
