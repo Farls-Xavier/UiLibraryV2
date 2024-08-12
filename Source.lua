@@ -84,7 +84,9 @@ function Library:Window(args)
 		TargetPlayer = nil
 	}
 
-	loadstring(game:HttpGet(Library.url.."ChatModule.lua"))():SendSystemMessage("/help for a list of commands")
+	if Config.Chat == true then
+		loadstring(game:HttpGet(Library.url.."ChatModule.lua"))()
+	end
 
 	Library._Window = This
 	local Minimized = false
