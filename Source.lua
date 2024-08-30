@@ -14,6 +14,7 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
 local HttpService = game:GetService("HttpService")
 local Config = HttpService:JSONDecode(readfile("@FarlsXavier\\UiConfig.json"))
 local UiTools = loadstring(game:HttpGet(Library.url.."UiTools.lua"))()
@@ -60,6 +61,30 @@ end
 function Library:destroy()
 	ScreenGui:Destroy()
 	Library = nil
+end
+
+function Roblox_Notification(message, buttons, callback)
+	buttons = buttons or {"Yes", "No"}
+	callback = callback or function ()
+		warn("Callback is set to nil")
+	end
+	
+	local BindableFunction = Instance.new("BindableFunction")
+	BindableFunction.OnInvoke = function()
+		callback()
+		task.delay(.5, function()
+			BindableFunction:Destroy()
+		end)
+	end
+
+	StarterGui:SetCore("SendNotification", {
+		Title = "Notification",
+		Text = message,
+		Icon = "rbxassetid://18700960425",
+		Button1 = buttons[1],
+		Button2 = buttons[2],
+		Callback = BindableFunction
+	})
 end
 
 function Library:tween(object, goal, callback)
@@ -1462,5 +1487,15 @@ function Library:Window(args)
 
 	return This
 end
+
+task.defer(function()
+	if self._Window == nil then
+		Roblox_Notification("Would you like to load an example?", {"Yes", "No"}, function(answer)
+			if answer == "Yes" then
+				loadstring(game:HttpGet(self.url.."Example.lua"))
+			end
+		end)
+	end
+end)
 
 return Library
