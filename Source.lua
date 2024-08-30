@@ -1,5 +1,11 @@
 local Library = {url = "https://raw.githubusercontent.com/Farls-Xavier/UiLibraryV2/main/"} -- Is NOT temporary
 
+Library.__index = Library
+
+local self = {}
+
+setmetatable(self, Library)
+
 function Library:strip(str)
 	return str:match("^%s*(.-)%s*$")
 end
@@ -15,8 +21,7 @@ local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
 for i,v in pairs(game.CoreGui:GetDescendants()) do
-	if v:IsA("StringValue") and v.Name == "ReferenceValue" and v.Parent.Name == "UiLibUi" then
-		warn("DELETING OLD SCRIPT(IF NOT RIGHT THEN TELL ME)")
+	if v:IsA("StringValue") and v.Name == "ReferenceValue" and v.Parent.Name == "UiLibUi" --[[and Config.MultiGui == false]] then
 		v.Parent:Destroy()
 	end
 end
@@ -84,15 +89,17 @@ function Library:Window(args)
 		TargetPlayer = nil
 	}
 
-	if Config.Chat == true then
+	--[[if Config.Chat == true then
 		loadstring(game:HttpGet(Library.url.."ChatModule.lua"))()
-	end
+	end]]
+
+	printColor("Gulp uhhh chat module soon :fire: !!!!", Color3.fromRGB(123, 255, 0))
 
 	Library._Window = This
 	local Minimized = false
 
 	coroutine.wrap(function()
-		while task.wait(1) do
+		while task.wait(.1) do
 			if LoadedVersion ~= Library:GetVersion() and NotifiedVersion ~= true then
 				NotifiedVersion = true
 				printColor("Ui library has updated from version: "..LoadedVersion.." to: "..Library:GetVersion(), Color3.fromRGB(97, 85, 165))
@@ -167,6 +174,8 @@ function Library:Window(args)
 	local UiStrokeTemplateImage = Instance.new("UIStroke")
 	local UiStrokeTemplateBind = Instance.new("UIStroke")
 	local UiStrokeTemplatePlayerInfo = Instance.new("UIStroke")
+	local TabCover = Instance.new("ImageLabel")
+	local TabCoverUiCorner = Instance.new("UICorner")
 
 	MainFrame.Name = "MainFrame"
 	MainFrame.Parent = ScreenGui
@@ -733,6 +742,21 @@ function Library:Window(args)
 	UiStrokeTemplatePlayerInfo.LineJoinMode = Enum.LineJoinMode.Round
 	UiStrokeTemplatePlayerInfo.Color = Color3.fromRGB(67,67,67)
 
+	TabCover.Name = "TabCover"
+	TabCover.Parent = TabHolder
+	TabCover.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	TabCover.BackgroundTransparency = 1.000
+	TabCover.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TabCover.BorderSizePixel = 0
+	TabCover.Position = UDim2.new(-0.00100000005, 0, -0.00100000005, 0)
+	TabCover.Size = UDim2.new(0, 515, 0, 291)
+	TabCover.ImageColor3 = Color3.fromRGB(0, 0, 0)
+	TabCover.ZIndex = 2
+
+	TabCoverUiCorner.CornerRadius = UDim.new(0, 4)
+	TabCoverUiCorner.Name = "TabCoverUiCorner"
+	TabCoverUiCorner.Parent = TabCover
+
 	UiTools.MakeDraggable(DragBar, MainFrame, 0.07)
 	
 	local NavOpen = true
@@ -744,15 +768,16 @@ function Library:Window(args)
 
 	NavTweenOpen:Play()
 	NavTogglebtnOpen:Play()
-	
+	Library:tween(TabCover, {BackgroundTransparency = 0})
+
 	Library:tween(NavigationToggle, {Rotation = 90})
-	
+
 	NavTweenOpen.Completed:Connect(function()
 		Library:tween(Version, {TextTransparency = 0})
 		Library:tween(SettingsImage_2, {ImageTransparency = 0})
 	end)
-	
-	function This:CloseNavigation()
+
+	local function CloseNavigation()
 		Library:tween(Version, {TextTransparency = 1})
 		Library:tween(SettingsImage_2, {ImageTransparency = 1})
 
@@ -770,6 +795,12 @@ function Library:Window(args)
 							Library:tween(vv, {ImageTransparency = 1}, function()
 								NavTweenClose:Play()
 								NavTogglebtnClose:Play()
+								
+								Library:tween(TabCover, {BackgroundTransparency = 1})
+					
+								DragBar.Position = UDim2.new(0.0436863415, 0, 0, 0)
+								DragBar.Size = UDim2.new(0, 510, 0, 29)
+								
 								task.delay(.1, function()
 									Library:tween(NavigationToggle, {Rotation = -90})
 								end)
@@ -784,18 +815,24 @@ function Library:Window(args)
 		end
 	end
 	
-	function This:OpenNavigation()
+	local function OpenNavigation()
 		Navigation.Visible = true
 		NavTweenOpen:Play()
 		NavTogglebtnOpen:Play()
+		
+		Library:tween(TabCover, {BackgroundTransparency = 0})
+		
 		task.delay(.1, function()
 			Library:tween(NavigationToggle, {Rotation = 90})
 		end)
 		
+		DragBar.Position = UDim2.new(.325, 0, 0, 0)
+		DragBar.Size = UDim2.new(0, 359, 0, 29)
+
 		NavTweenOpen.Completed:Connect(function()
 			Library:tween(Version, {TextTransparency = 0})
 			Library:tween(SettingsImage_2, {ImageTransparency = 0})
-			
+
 			for i,v in pairs(Layout:GetChildren()) do
 				if not string.find(v.Name:lower(), "template") then
 					if v:IsA("TextButton") then
@@ -820,9 +857,9 @@ function Library:Window(args)
 	UserInputService.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 and NavToggleHover then
 			if NavOpen then
-				This:CloseNavigation()
+				CloseNavigation()
 			else
-				This:OpenNavigation()
+				OpenNavigation()
 			end
 			NavOpen = not NavOpen
 		end
@@ -1205,7 +1242,6 @@ function Library:Window(args)
 				Key = args.Keybind,
 				BindTextHover = false,
 				SettingKey = false,
-				DoingTextAnimation = false,
 				Connection = nil
 			}
 
@@ -1281,30 +1317,26 @@ function Library:Window(args)
 
 			UserInputService.InputBegan:Connect(function(input, gpe)
 				if NavOpen then return end
-				if input.UserInputType == Enum.UserInputType.MouseButton1 and Keybind.BindTextHover and not Keybind.DoingTextAnimation then
-					Keybind.DoingTextAnimation = true
-					Library:tween(RenderedKeybind.BindText, {TextTransparency = 1}, function()
-						Library:tween(RenderedKeybind.BindText, {TextTransparency = 0})
-						RenderedKeybind.BindText.Text = "..."
-						Keybind.DoingTextAnimation = false
+				if input.UserInputType == Enum.UserInputType.MouseButton1 and Keybind.BindTextHover and not Keybind.SettingKey then
+					RenderedKeybind.BindText.Text = "..."
+					Keybind.SettingKey = true
 
-						Keybind.SettingKey = true
+					Keybind.Connection = UserInputService.InputBegan:Connect(function(inp)
+						if keys[inp.KeyCode] then
+							RenderedKeybind.BindText.Text = keys[inp.KeyCode]
+						else
+							RenderedKeybind.BindText.Text = inp.KeyCode.Name
+						end
 
-						Keybind.Connection = UserInputService.InputBegan:Connect(function(inp)
-							if keys[inp.KeyCode] then
-								RenderedKeybind.BindText.Text = keys[inp.KeyCode]
-							else
-								RenderedKeybind.BindText.Text = inp.KeyCode.Name
-							end
+						Keybind.Key = inp.KeyCode
+						args.Keybind = inp.KeyCode
 
-							Keybind.Key = inp.KeyCode
-							args.Keybind = inp.KeyCode
-
-							task.delay(.1, function()
-								Keybind.SettingKey = false
+						task.delay(.1, function()
+							Keybind.SettingKey = false
+							if Keybind.Connection then
 								Keybind.Connection:Disconnect()
-								Keybind.Connection = nil
-							end)
+							end
+							Keybind.Connection = nil
 						end)
 					end)
 				end
