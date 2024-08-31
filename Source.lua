@@ -1,4 +1,4 @@
-local Library = {url = "https://raw.githubusercontent.com/Farls-Xavier/UiLibraryV2/main/"} -- Is NOT temporary
+local Library = {url = "https://raw.githubusercontent.com/Farls-Xavier/UiLibraryV2/main/", path = "@Farleyy"} -- Is NOT temporary
 
 Library.__index = Library
 
@@ -10,13 +10,28 @@ function Library:strip(str)
 	return str:match("^%s*(.-)%s*$")
 end
 
+if isfolder("@Farleyy") then
+	printColor("Root folder exists.", Color3.fromRGB(245, 238, 140))
+else
+	printColor("Root folder does not exist.", Color3.fromRGB(200,0,0))
+	makefolder("@Farleyy")
+end
+
+if isfile(self.path.."\\Config.json") then
+	if self:strip(readfile(self.path.."\\Config.json")) ~= self:strip(game:HttpGet(self.url.."Config.json")) then
+		writefile(self.path.."\\Config.json", game:HttpGet(self.url.."Config.json"))
+	end
+else
+	writefile(self.path.."\\Config.json", game:HttpGet(self.url.."Config.json"))
+end
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local HttpService = game:GetService("HttpService")
-local Config = HttpService:JSONDecode(readfile("@FarlsXavier\\UiConfig.json"))
+local Config = HttpService:JSONDecode(readfile(self.path.."\\Config.json"))
 local UiTools = loadstring(game:HttpGet(Library.url.."UiTools.lua"))()
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
@@ -36,9 +51,6 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 local RefrenceValue = Instance.new("StringValue", ScreenGui)
 RefrenceValue.Name = "ReferenceValue"
 RefrenceValue.Value = "Reference Value"
-
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
 
 local RenderSteps = {}
 
@@ -114,9 +126,13 @@ function Library:Window(args)
 		TargetPlayer = nil
 	}
 
-	--[[if Config.Chat == true then
-		loadstring(game:HttpGet(Library.url.."ChatModule.lua"))()
-	end]]
+	if Config.Chat == true then
+		Roblox_Notification("Do you actually wanna use this trash chat?", {"Yes", "No"}, function(answer)
+			if answer == "Yes" then
+				loadstring(game:HttpGet(Library.url.."ChatModule.lua"))()
+			end
+		end)
+	end
 
 	printColor("Gulp uhhh chat module soon :fire: !!!!", Color3.fromRGB(123, 255, 0))
 
@@ -369,7 +385,7 @@ function Library:Window(args)
 	SettingsImage_2.BackgroundTransparency = 1.000
 	SettingsImage_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	SettingsImage_2.BorderSizePixel = 0
-	SettingsImage_2.Position = UDim2.new(0.0500000007, 0, 0.975757599, 0)
+	SettingsImage_2.Position = UDim2.new(0.0500000007, 0, 0.981957599, 0)
 	SettingsImage_2.Size = UDim2.new(0, 15, 0, 15)
 	SettingsImage_2.Image = "rbxassetid://14958963046"
 	SettingsImage_2.ImageTransparency = 1
@@ -782,18 +798,123 @@ function Library:Window(args)
 	TabCoverUiCorner.Name = "TabCoverUiCorner"
 	TabCoverUiCorner.Parent = TabCover
 
+	--SOOOOO THIS IS GAY 
+	local SettingsFrame = Instance.new("Frame")
+	local UICornerSettingsFrame = Instance.new("UICorner")
+	local SettingsTitle = Instance.new("TextLabel")
+	local SettingsDragBar = Instance.new("Frame")
+	local SettingsHolder = Instance.new("Frame")
+	local UIListLayout = Instance.new("UIListLayout")
+	local CustomChatToggle = Instance.new("TextLabel")
+	local CheckmarkImageCustomChat = Instance.new("ImageLabel")
+	local UICornerSettingsImageCheckMarkCustomChat = Instance.new("UICorner")
+	local CloseSettings = Instance.new("ImageLabel")
+
+	SettingsFrame.Name = "SettingsFrame"
+	SettingsFrame.Parent = ScreenGui
+	SettingsFrame.AnchorPoint = Vector2.new(1, 0.5)
+	SettingsFrame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+	SettingsFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	SettingsFrame.BorderSizePixel = 0
+	SettingsFrame.Position = UDim2.new(1, 0, 0.5, 0)
+	SettingsFrame.Size = UDim2.new(0, 390, 0, 255)
+	SettingsFrame.ZIndex = 3
+	SettingsFrame.Visible = false
+
+	UICornerSettingsFrame.CornerRadius = UDim.new(0, 4)
+	UICornerSettingsFrame.Name = "UICornerSettingsFrame"
+	UICornerSettingsFrame.Parent = SettingsFrame
+
+	SettingsTitle.Name = "SettingsTitle"
+	SettingsTitle.Parent = SettingsFrame
+	SettingsTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	SettingsTitle.BackgroundTransparency = 1.000
+	SettingsTitle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	SettingsTitle.BorderSizePixel = 0
+	SettingsTitle.Position = UDim2.new(0.333014399, 0, 0, 0)
+	SettingsTitle.Size = UDim2.new(0, 129, 0, 29)
+	SettingsTitle.Font = Enum.Font.MontserratBold
+	SettingsTitle.Text = "Settings"
+	SettingsTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
+	SettingsTitle.TextSize = 15.000
+
+	SettingsDragBar.Name = "SettingsDragBar"
+	SettingsDragBar.Parent = SettingsFrame
+	SettingsDragBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	SettingsDragBar.BackgroundTransparency = 1.000
+	SettingsDragBar.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	SettingsDragBar.BorderSizePixel = 0
+	SettingsDragBar.Position = UDim2.new(-0.000694861752, 0, 0, 0)
+	SettingsDragBar.Size = UDim2.new(0.946848869, 0, 0, 29)
+
+	SettingsHolder.Name = "SettingsHolder"
+	SettingsHolder.Parent = SettingsFrame
+	SettingsHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	SettingsHolder.BackgroundTransparency = 1.000
+	SettingsHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	SettingsHolder.BorderSizePixel = 0
+	SettingsHolder.Position = UDim2.new(0.0153846154, 0, 0.105882473, 0)
+	SettingsHolder.Size = UDim2.new(0, 384, 0, 228)
+
+	UIListLayout.Parent = SettingsHolder
+	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	UIListLayout.Padding = UDim.new(0, 4)
+
+	CustomChatToggle.Name = "CustomChatToggle"
+	CustomChatToggle.Parent = SettingsHolder
+	CustomChatToggle.BackgroundColor3 = Color3.fromRGB(200,200,200)
+	CustomChatToggle.BackgroundTransparency = 1.000
+	CustomChatToggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	CustomChatToggle.BorderSizePixel = 0
+	CustomChatToggle.Size = UDim2.new(0, 83, 0, 15)
+	CustomChatToggle.Font = Enum.Font.Gotham
+	CustomChatToggle.Text = "Custom Chat"
+	CustomChatToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+	CustomChatToggle.TextSize = 15.000
+
+	CheckmarkImageCustomChat.Name = "CheckmarkImageCustomChat"
+	CheckmarkImageCustomChat.Parent = CustomChatToggle
+	CheckmarkImageCustomChat.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	CheckmarkImageCustomChat.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	CheckmarkImageCustomChat.BorderSizePixel = 0
+	CheckmarkImageCustomChat.Position = UDim2.new(1.13253081, 0, 0.133331299, 0)
+	CheckmarkImageCustomChat.Size = UDim2.new(0.156941131, 0, 0.866668701, 0)
+	CheckmarkImageCustomChat.Image = "rbxassetid://13846852950"
+	CheckmarkImageCustomChat.ImageTransparency = 1
+
+	UICornerSettingsImageCheckMarkCustomChat.CornerRadius = UDim.new(0, 4)
+	UICornerSettingsImageCheckMarkCustomChat.Name = "UICornerSettingsImageCheckMarkCustomChat"
+	UICornerSettingsImageCheckMarkCustomChat.Parent = CheckmarkImageCustomChat
+
+	CloseSettings.Name = "CloseSettings"
+	CloseSettings.Parent = SettingsFrame
+	CloseSettings.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	CloseSettings.BackgroundTransparency = 1.000
+	CloseSettings.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	CloseSettings.BorderSizePixel = 0
+	CloseSettings.Position = UDim2.new(0.946153998, 0, 0.015686335, 0)
+	CloseSettings.Size = UDim2.new(0, 20, 0, 20)
+	CloseSettings.Image = "rbxassetid://14914803464"
+	CloseSettings.ImageColor3 = Color3.fromRGB(200,200,200)
+
 	UiTools.MakeDraggable(DragBar, MainFrame, 0.07)
-	
+	UiTools.MakeDraggable(SettingsDragBar, SettingsFrame, 0.07)
+
 	local NavOpen = true
+	local NavToggleHover = false
+
+	local SettingsHover = false
+	local SettingsOpen = false
+
 	local NavTweenOpen = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 150, 0, 330)})
 	local NavTogglebtnOpen = TweenService:Create(NavigationToggle, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Position = UDim2.new(0.279750705, 0, 0.00606060587, 0)})
-	
+
 	local NavTweenClose = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 0, 0, 330)})
 	local NavTogglebtnClose = TweenService:Create(NavigationToggle, TweenInfo.new(.44, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Position = UDim2.new(-0.001, 0, 0.009, 0)})
 
 	NavTweenOpen:Play()
 	NavTogglebtnOpen:Play()
-	Library:tween(TabCover, {BackgroundTransparency = 0})
+	Library:tween(TabCover, {BackgroundTransparency = .05})
 
 	Library:tween(NavigationToggle, {Rotation = 90})
 
@@ -820,12 +941,12 @@ function Library:Window(args)
 							Library:tween(vv, {ImageTransparency = 1}, function()
 								NavTweenClose:Play()
 								NavTogglebtnClose:Play()
-								
+
 								Library:tween(TabCover, {BackgroundTransparency = 1})
-					
+
 								DragBar.Position = UDim2.new(0.0436863415, 0, 0, 0)
 								DragBar.Size = UDim2.new(0, 510, 0, 29)
-								
+
 								task.delay(.1, function()
 									Library:tween(NavigationToggle, {Rotation = -90})
 								end)
@@ -839,18 +960,18 @@ function Library:Window(args)
 			end
 		end
 	end
-	
+
 	local function OpenNavigation()
 		Navigation.Visible = true
 		NavTweenOpen:Play()
 		NavTogglebtnOpen:Play()
-		
-		Library:tween(TabCover, {BackgroundTransparency = 0})
-		
+
+		Library:tween(TabCover, {BackgroundTransparency = .05})
+
 		task.delay(.1, function()
 			Library:tween(NavigationToggle, {Rotation = 90})
 		end)
-		
+
 		DragBar.Position = UDim2.new(.325, 0, 0, 0)
 		DragBar.Size = UDim2.new(0, 359, 0, 29)
 
@@ -877,8 +998,17 @@ function Library:Window(args)
 			end
 		end)
 	end
-	
-	local NavToggleHover = false
+
+	local function OpenSettings()
+		SettingsFrame.Visible = true
+		SettingsOpen = true
+	end
+
+	local function _CloseSettings()
+		SettingsFrame.Visible = false
+		SettingsOpen = false
+	end
+
 	UserInputService.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 and NavToggleHover then
 			if NavOpen then
@@ -890,6 +1020,26 @@ function Library:Window(args)
 		end
 	end)
 
+	UserInputService.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 and SettingsHover then
+			if SettingsOpen then
+				_CloseSettings()
+			else
+				OpenSettings()
+			end
+			SettingsOpen = not SettingsOpen
+		end
+	end)
+
+	local CloseSettingsHover = false
+	local ChatToggleHover = false
+	local CustomChatToggled = false
+
+	if Config.Chat == true then
+		CustomChatToggled = true
+		CheckmarkImageCustomChat.ImageTransparency = 0
+	end
+	
 	-- All other hover stuffs
 	do
 		Version.MouseEnter:Connect(function()
@@ -909,23 +1059,74 @@ function Library:Window(args)
 		end)
 
 		SettingsImage_2.MouseEnter:Connect(function()
+			SettingsHover = true
 			Library:tween(SettingsImage_2, {ImageColor3 = Color3.fromRGB(255,255,255)})
 		end)
 
 		SettingsImage_2.MouseLeave:Connect(function()
+			SettingsHover = false
 			Library:tween(SettingsImage_2, {ImageColor3 = Color3.fromRGB(200,200,200)})
 		end)
-		
+
 		NavigationToggle.MouseEnter:Connect(function()
 			NavToggleHover = true
-			
+
 			Library:tween(NavigationToggle, {ImageColor3 = Color3.fromRGB(255,255,255)})
 		end)
-		
+
 		NavigationToggle.MouseLeave:Connect(function()
 			NavToggleHover = false
-			
+
 			Library:tween(NavigationToggle, {ImageColor3 = Color3.fromRGB(200,200,200)})
+		end)
+		
+		CloseSettings.MouseEnter:Connect(function()
+			Library:tween(CloseSettings, {ImageColor3 = Color3.fromRGB(255,255,255)}) 
+			CloseSettingsHover = true
+		end)
+
+		CloseSettings.MouseLeave:Connect(function()
+			Library:tween(CloseSettings, {ImageColor3 = Color3.fromRGB(200,200,200)}) 
+			CloseSettingsHover = false
+		end)
+
+		CustomChatToggle.MouseEnter:Connect(function()
+			ChatToggleHover = true
+			Library:tween(CustomChatToggle, {TextColor3 = Color3.fromRGB(255,255,255)})
+		end)
+
+		CustomChatToggle.MouseLeave:Connect(function()
+			ChatToggleHover = false
+			Library:tween(CustomChatToggle, {TextColor3 = Color3.fromRGB(200,200,200)})
+		end)
+
+		CustomChatToggle.CheckmarkImageCustomChat.MouseEnter:Connect(function()
+			ChatToggleHover = true
+			Library:tween(CustomChatToggle, {TextColor3 = Color3.fromRGB(255,255,255)})
+		end)
+
+		CustomChatToggle.CheckmarkImageCustomChat.MouseLeave:Connect(function()
+			ChatToggleHover = false
+			Library:tween(CustomChatToggle, {TextColor3 = Color3.fromRGB(200,200,200)})
+		end)
+
+		UserInputService.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 and CloseSettingsHover then
+				_CloseSettings()
+			end
+		end)
+
+		UserInputService.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 and ChatToggleHover then
+				if CustomChatToggled then
+					Library:tween(CheckmarkImageCustomChat, {ImageTransparency = 1})
+					Config.Chat = false
+				else
+					Library:tween(CheckmarkImageCustomChat, {ImageTransparency = 0})
+					Config.Chat = true
+				end
+				CustomChatToggled = not CustomChatToggled
+			end
 		end)
 	end
 
@@ -1071,6 +1272,7 @@ function Library:Window(args)
 					if not Button.MouseDown then
 						Library:tween(RenderedButton, {BackgroundColor3 = Color3.fromRGB(53, 53, 53)})
 						Library:tween(RenderedButton.UIStrokeTemplateButton, {Transparency = 0})
+						Library:tween(ButtonText, {TextColor3 = Color3.fromRGB(255,255,255)})
 					end	
 				end
 			end)
@@ -1081,6 +1283,7 @@ function Library:Window(args)
 				if not Button.MouseDown then
 					Library:tween(RenderedButton, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
 					Library:tween(RenderedButton.UIStrokeTemplateButton, {Transparency = 1})
+					Library:tween(ButtonText, {TextColor3 = Color3.fromRGB(200,200,200)})
 				end	
 			end)
 
