@@ -47,6 +47,10 @@ local TextLabelTemplate = Instance.new("TextLabel")
 local GradientHolder = Instance.new("Frame")
 local UIGradientHolder = Instance.new("UIGradient")
 local UICornerGradientHolder = Instance.new("UICorner")
+local EmojiSuggestionTemplate = Instance.new("Frame")
+local UICornerEmojiTemplate = Instance.new("UICorner")
+local EmojiLabel = Instance.new("TextLabel")
+local UICornerEmojiLabel = Instance.new("UICorner")
 
 BackFrame.Name = "BackFrame"
 BackFrame.Parent = ScreenGui
@@ -125,7 +129,7 @@ TextLabelTemplate.BorderColor3 = Color3.fromRGB(255, 255, 255)
 TextLabelTemplate.TextTransparency = 1
 TextLabelTemplate.BorderSizePixel = 0
 TextLabelTemplate.Size = UDim2.new(.95, 0, 0, 15)
-TextLabelTemplate.Font = Enum.Font.GothamMedium
+TextLabelTemplate.Font = Enum.Font.Gotham
 TextLabelTemplate.TextWrapped = true
 TextLabelTemplate.RichText = true
 TextLabelTemplate.Text = "<font weight=\"bold\"><font face=\"Montserrat\"><font color=\"#EFC3CA\">[Tag]</font></font></font> <font color=\"#FFDE59\">Farleyy</font>: Text Message"
@@ -153,13 +157,43 @@ UICornerGradientHolder.CornerRadius = UDim.new(0, 4)
 UICornerGradientHolder.Name = "UICornerGradientHolder"
 UICornerGradientHolder.Parent = GradientHolder
 
+EmojiSuggestionTemplate.Name = "EmojiSuggestionTemplate"
+EmojiSuggestionTemplate.Visible = false
+EmojiSuggestionTemplate.Parent = GradientHolder
+EmojiSuggestionTemplate.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+EmojiSuggestionTemplate.BackgroundTransparency = 0.100
+EmojiSuggestionTemplate.BorderColor3 = Color3.fromRGB(0, 0, 0)
+EmojiSuggestionTemplate.BorderSizePixel = 0
+EmojiSuggestionTemplate.Position = UDim2.new(0.016, 0, 0.15, 0)
+EmojiSuggestionTemplate.Size = UDim2.new(0, 65, 0, 25)
+
+UICornerEmojiTemplate.CornerRadius = UDim.new(0, 4)
+UICornerEmojiTemplate.Name = "UICornerEmojiTemplate"
+UICornerEmojiTemplate.Parent = EmojiSuggestionTemplate
+
+EmojiLabel.Name = "EmojiLabel"
+EmojiLabel.Parent = EmojiSuggestionTemplate
+EmojiLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+EmojiLabel.BackgroundTransparency = 1.000
+EmojiLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+EmojiLabel.BorderSizePixel = 0
+EmojiLabel.Size = UDim2.new(1, 0, 1, 0)
+EmojiLabel.Font = Enum.Font.GothamMedium
+EmojiLabel.Text = "😭  sob"
+EmojiLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+EmojiLabel.TextSize = 17.000
+
+UICornerEmojiLabel.CornerRadius = UDim.new(0, 4)
+UICornerEmojiLabel.Name = "UICornerEmojiLabel"
+UICornerEmojiLabel.Parent = EmojiLabel
+
 local Hover = false
 
 BackFrame.MouseEnter:Connect(function()
 	Hover = true
 	tween(GradientHolder, {Transparency = 0})
 	tween(Messages, {ScrollBarImageTransparency = 0})
-	tween(ChatBox, {Transparency = .35})
+	tween(ChatBox, {Transparency = .25})
 	tween(ChatBox, {BackgroundColor3 = Color3.fromRGB(0,0,0)})
 end)
 
@@ -231,6 +265,8 @@ end
 local lastMessagePosition = UDim2.new(0, 0, 0, 0)
 
 function module.RenderMessage(Sender, Message, ChatTag)
+	local emojiPattern = "[%z\1-\31\127-\255\194-\244][\128-\191][\128-\191]*"
+
 	if string.len(Message) < 1 then
 		print("Not enough text!")
 		return
@@ -238,30 +274,35 @@ function module.RenderMessage(Sender, Message, ChatTag)
 	if Players:FindFirstChild(Sender.Name) then
 		if Sender:GetAttribute("Muted") == true then return end
 	end
+
 	local Label = TextLabelTemplate:Clone()
-		Label.Name = "Message_"..Sender.UserId
-		Label.Parent = Messages
-		Label.Visible = true
+	Label.Name = "Message_"..Sender.UserId
+	Label.Parent = Messages
+	Label.Visible = true
 	table.insert(module.Messages, Label)
-	
+
 	ChatTag = ChatTag or ""
-	
+
 	if Sender == Players.LocalPlayer then
-		Label.Text = ChatTag.."<font color=\"#FFDE59\">"..Sender.DisplayName.."</font>: "..tostring(Message)
+		Label.Text = "<font color=\"#FFDE59\">"..Sender.DisplayName.."</font>: "..tostring(Message)
 	elseif Sender.Name == "System" then
 		Label.Text = ChatTag..": "..tostring(Message)
 	elseif Players.LocalPlayer:IsFriendsWith(Sender.UserId) then
-		ChatTag = module:ChatTag("F", "#16A085")
-		Label.Text = ChatTag.."<font color=\""..Sender:GetAttribute("TextColor").."\">"..Sender.DisplayName.."</font>: "..tostring(Message)
+		Label.Text = "<font color=\""..Sender:GetAttribute("TextColor").."\">"..Sender.DisplayName.."</font>: "..tostring(Message)
 	else
 		Label.Text = ChatTag.."<font color=\""..Sender:GetAttribute("TextColor").."\">"..Sender.DisplayName.."</font>:"..tostring(Message)
 	end
-	
-	if Sender.Name ~= "System" then
-		local textSize = TextService:GetTextSize(Label.Text, Label.TextSize, Label.Font, Vector2.new(Label.AbsoluteSize.X, math.huge))
-		Label.Size = UDim2.new(0, textSize.X, 0, textSize.Y)
+
+	local function setText(s:string)
+		print(s:gsub(emojiPattern, ""):gsub("<[^>]+>", ""))
+		return s:gsub(emojiPattern, "")
 	end
-	
+
+	if Sender.Name ~= "System" then
+		local textSize = TextService:GetTextSize(setText(Label.Text), Label.TextSize, Label.Font, Vector2.new(Label.AbsoluteSize.X, math.huge))
+		Label.Size = UDim2.new(0, textSize.X, 0, textSize.Y + 3)
+	end
+
 	tween(Label, {TextTransparency = 0}, .15)
 end
 
@@ -271,10 +312,10 @@ function module:SendSystemMessage(Message)
 		DisplayName = "System",
 		UserId = -1
 	}
-	module.RenderMessage(System, Message, module:ChatTag("System", "#AAB7B8"))
+	module.RenderMessage(System, Message, module:ChatTag("[System]", "#AAB7B8"))
 end
 
-module:SendSystemMessage("/help for a list of commands")
+self:SendSystemMessage("/help for a list of commands")
 
 function module.SendMessage(Message, Recipent, Callback)
 	Callback = Callback or function() end
@@ -330,7 +371,7 @@ end
 TextBox.Focused:Connect(function()
 	tween(GradientHolder, {Transparency = 0})
 	tween(Messages, {ScrollBarImageTransparency = 0})
-	tween(ChatBox, {Transparency = .35})
+	tween(ChatBox, {Transparency = .25})
 	tween(ChatBox, {BackgroundColor3 = Color3.fromRGB(0,0,0)})
 	tween(TextBox, {TextTransparency = 0})				
 end)
@@ -339,11 +380,11 @@ TextBox.FocusLost:Connect(function(ep)
 	tween(ChatBox, {Transparency = .970})
 	tween(ChatBox, {BackgroundColor3 = Color3.fromRGB(11,11,11)})
 	tween(TextBox, {TextTransparency = .44})
-	
+
 	if Hover == false then
 		tween(GradientHolder, {Transparency = 1})
 	end
-	
+
 	if ep then	
 		module.SendMessage(TextBox.Text, "All")
 		module.RenderMessage(Players.LocalPlayer, TextBox.Text)
@@ -353,14 +394,16 @@ end)
 
 local Friends = {}
 
-for i,v in pairs(Players:GetPlayers()) do
-	if Players.LocalPlayer:IsFriendsWith(v.UserId) then
-		table.insert(Friends, v.Name)
-		if #Friends > 0 then
-			module:SendSystemMessage("Friends in server "..table.concat(Friends, ","))
-		end
-	end
+for _,v in pairs(Players:GetPlayers()) do
+	
 	if v ~= Players.LocalPlayer then
+		if Players.LocalPlayer:IsFriendsWith(v.UserId) then
+			table.insert(Friends, v.Name)
+			if #Friends > 0 then
+				module:SendSystemMessage("Your friend(s) in this server: "..table.concat(Friends, ","))
+			end
+		end
+		
 		module.ConnectPlayerChatEvent(v)
 		v:SetAttribute("TextColor", ColorTable[math.random(1, #ColorTable)])
 	end
@@ -374,9 +417,161 @@ Players.PlayerAdded:Connect(function(player)
 	player:SetAttribute("TextColor", ColorTable[math.random(1, #ColorTable)])
 end)
 
--- THANK GOD FOR CHAT GPT :SOB:
+local Emojis = {
+	List = {
+		["sob"] = "😭",
+		["skull"] = "💀",
+		["smile"] = "😊",
+		["heart"] = "❤️",
+		["thumbsup"] = "👍",
+		["pray"] = "🙏",
+		["fire"] = "🔥",
+		["laugh"] = "😂",
+		["sad"] = "😢",
+		["angry"] = "😠",
+		["cry"] = "😭",
+		["wink"] = "😉",
+		["star"] = "⭐",
+		["sunglasses"] = "😎",
+		["clap"] = "👏",
+		["kiss"] = "😘",
+		["thinking"] = "🤔",
+		["party"] = "🎉",
+		["love"] = "💖",
+		["starstruck"] = "🤩",
+		["scream"] = "😱",
+		["facepalm"] = "🤦",
+		["hug"] = "🤗",
+		["cool"] = "😎",
+		["shocked"] = "😳",
+		["pensive"] = "😔",
+		["sweat"] = "😓",
+		["grin"] = "😁",
+		["smirk"] = "😏",
+		["blush"] = "😊",
+		["neutral"] = "😐",
+		["sleep"] = "😴",
+		["unamused"] = "😒",
+		["roll_eyes"] = "🙄",
+		["zipper_mouth"] = "🤐",
+		["nerd"] = "🤓",
+		["monkey"] = "🐒",
+		["dog"] = "🐶",
+		["cat"] = "🐱",
+		["rabbit"] = "🐰",
+		["penguin"] = "🐧",
+		["frog"] = "🐸",
+		["bear"] = "🐻",
+		["koala"] = "🐨",
+		["tiger"] = "🐯",
+		["lion"] = "🦁",
+		["elephant"] = "🐘",
+		["giraffe"] = "🦒",
+		["zebra"] = "🦓",
+		["horse"] = "🐴",
+		["unicorn"] = "🦄",
+		["dragon"] = "🐲",
+		["snake"] = "🐍",
+		["turtle"] = "🐢",
+		["fish"] = "🐟",
+		["whale"] = "🐋",
+		["dolphin"] = "🐬",
+		["octopus"] = "🐙",
+		["crab"] = "🦀",
+		["lobster"] = "🦞",
+		["beetle"] = "🐞",
+		["butterfly"] = "🦋",
+		["bug"] = "🐛",
+		["sun"] = "☀️",
+		["cloud"] = "☁️",
+		["rain"] = "🌧️",
+		["snowflake"] = "❄️",
+		["wind"] = "🌬️",
+		["thunder"] = "⛈️",
+		["rainbow"] = "🌈",
+		["moon"] = "🌙",
+		["sunflower"] = "🌻",
+		["rose"] = "🌹",
+		["cactus"] = "🌵",
+		["tree"] = "🌲",
+		["leaf"] = "🍃",
+		["palm_tree"] = "🌴",
+		["gift"] = "🎁",
+		["balloon"] = "🎈",
+		["cake"] = "🎂",
+		["cookie"] = "🍪",
+		["ice_cream"] = "🍦",
+		["coffee"] = "☕",
+		["beer"] = "🍺",
+		["wine"] = "🍷",
+		["cocktail"] = "🍹",
+		["pizza"] = "🍕",
+		["hamburger"] = "🍔",
+		["fries"] = "🍟",
+		["sushi"] = "🍣",
+		["taco"] = "🌮",
+		["hotdog"] = "🌭",
+		["bento"] = "🍱",
+		["spaghetti"] = "🍝",
+		["bread"] = "🍞",
+		["apple"] = "🍎",
+		["banana"] = "🍌",
+		["grapes"] = "🍇",
+		["watermelon"] = "🍉",
+		["strawberry"] = "🍓",
+		["pineapple"] = "🍍",
+		["mango"] = "🥭",
+		["lemon"] = "🍋",
+		["peach"] = "🍑",
+		["cherry"] = "🍒",
+		["pear"] = "🍐",
+		["avocado"] = "🥑",
+		["carrot"] = "🥕",
+		["potato"] = "🥔",
+		["corn"] = "🌽",
+		["broccoli"] = "🥦",
+		["lettuce"] = "🥬",
+		["pepper"] = "🌶️",
+		["cucumber"] = "🥒",
+		["mushroom"] = "🍄",
+		["eggplant"] = "🍆",
+		["tomato"] = "🍅",
+		["tangerine"] = "🍊",
+		["kiwi"] = "🥝",
+		["chestnut"] = "🌰",
+		["egg"] = "🥚",
+		["poultry_leg"] = "🍗",
+		["meat_on_bone"] = "🍖",
+		["bacon"] = "🥓",
+		["pancakes"] = "🥞",
+		["waffle"] = "🧇",
+		["dumpling"] = "🥟",
+		["fortune_cookie"] = "🥠",
+		["chocolate_bar"] = "🍫",
+		["popcorn"] = "🍿",
+		["cotton_candy"] = "🍭",
+		["lollipop"] = "🍭",
+		["honey"] = "🍯",
+		["salt"] = "🧂",
+		["sake"] = "🍶",
+		["rice"] = "🍚",
+		["ramen"] = "🍜",
+		["squid"] = "🦑",
+		["shrimp"] = "🍤",
+	}
+}
+
+function Emojis.replaceEmojis(text)
+	for keyword, emoji in pairs(Emojis.List) do
+		text = text:gsub(":" .. keyword .. ":", emoji)
+	end
+	return text
+end
+
 TextBox:GetPropertyChangedSignal("Text"):Connect(function()
-	local textContent = TextBox.Text
+	local textContent = Emojis.replaceEmojis(TextBox.Text)
+	TextBox.Text = textContent
+
 	local textSize = TextService:GetTextSize(textContent, TextBox.TextSize, TextBox.Font, Vector2.new(TextBox.AbsoluteSize.X, math.huge))
 	local newHeight = textSize.Y + 16
 
