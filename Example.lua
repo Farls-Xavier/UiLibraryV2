@@ -14,3 +14,4 @@ Tab2:ImageLabel({Image = "rbxassetid://18703386053"})
 Tab2:Keybind({Text = "A keybind", Keybind = Enum.KeyCode.F})
 
 Tab3:Player({Player = Players.LocalPlayer})
+Tab3:Label({Text = "A label"})
