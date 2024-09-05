@@ -43,6 +43,16 @@ for i,v in pairs(game.CoreGui:GetDescendants()) do
 end
 
 local RenderSteps = {}
+local Images = {
+	"rbxassetid://133772874267731",
+	"rbxassetid://18700960425",
+	"rbxassetid://12759851955",
+	"rbxassetid://18703386053",
+}
+
+local function GetRandomImage()
+	return Images[math.random(1, #Images)]
+end
 
 local function RenderStepped(func)
 	local Connection = RunService.RenderStepped:Connect(func)
@@ -77,7 +87,7 @@ function Roblox_Notification(message, buttons, callback)
 	StarterGui:SetCore("SendNotification", {
 		Title = "Notification",
 		Text = message,
-		Icon = "rbxassetid://18700960425",
+		Icon = GetRandomImage(),
 		Button1 = buttons[1],
 		Button2 = buttons[2],
 		Callback = BindableFunction
@@ -102,6 +112,8 @@ local NotifiedVersion = false
 function Library:Window(args)
 	args = Library:Validate({
 		Title = "Ui Library",
+		ToolTipColor = Color3.fromRGB(255,255,255),
+		ToolTipTextColor = Color3.fromRGB(0,0,0),
 		OnClose = function() end
 	}, args or {})
 
@@ -132,7 +144,6 @@ function Library:Window(args)
 	printColor("Gulp uhhh chat module soon :fire: !!!!", Color3.fromRGB(98, 0, 255))
 
 	Library._Window = This
-	local Minimized = false
 
 	coroutine.wrap(function()
 		while task.wait(.5) do
@@ -811,9 +822,43 @@ function Library:Window(args)
 	TabCoverUiCorner.Name = "TabCoverUiCorner"
 	TabCoverUiCorner.Parent = TabCover
 
+	local ToolTip = Instance.new("Frame")
+	local UICornerToolTip = Instance.new("UICorner")
+	local ToolTipText = Instance.new("TextLabel")
+	
+	ToolTip.Name = "ToolTip"
+	ToolTip.Parent = ScreenGui
+	ToolTip.Visible = false
+	ToolTip.BackgroundTransparency = 1
+	ToolTip.BackgroundColor3 = args.ToolTipColor
+	ToolTip.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ToolTip.BorderSizePixel = 0
+	ToolTip.Position = UDim2.new(0.227044031, 0, 0.367624819, 0)
+	ToolTip.Size = UDim2.new(0, 70, 0, 17)
+	ToolTip.ZIndex = 5
+
+	UICornerToolTip.CornerRadius = UDim.new(0, 2)
+	UICornerToolTip.Name = "UICornerToolTip"
+	UICornerToolTip.Parent = ToolTip
+
+	ToolTipText.Name = "ToolTipText"
+	ToolTipText.Parent = ToolTip
+	ToolTipText.TextTransparency = 1
+	ToolTipText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ToolTipText.BackgroundTransparency = 1.000
+	ToolTipText.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ToolTipText.BorderSizePixel = 0
+	ToolTipText.Size = UDim2.new(1, 0, 1, 0)
+	ToolTipText.Font = Enum.Font.SourceSans
+	ToolTipText.Text = "ToolTip"
+	ToolTipText.TextColor3 = args.ToolTipTextColor
+	ToolTipText.TextSize = 14.000
+	ToolTipText.TextWrapped = false
+
 	UiTools.MakeDraggable(DragBar, MainFrame, 0.07)
 
 	local NavOpen = true
+	local NavAction = false
 	local NavToggleHover = false
 
 	local NavTweenOpen = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 150, 0, 330)})
@@ -834,6 +879,8 @@ function Library:Window(args)
 
 	local function CloseNavigation()
 		Library:tween(Version, {TextTransparency = 1})
+
+		NavAction = true
 
 		for i,v in pairs(Layout:GetChildren()) do
 			if not string.find(v.Name:lower(), "template") then
@@ -860,6 +907,7 @@ function Library:Window(args)
 								end)
 								NavTweenClose.Completed:Connect(function()
 									Navigation.Visible = false
+									NavAction = false
 								end)
 							end)
 						end
@@ -871,6 +919,7 @@ function Library:Window(args)
 
 	local function OpenNavigation()
 		Navigation.Visible = true
+		NavAction = true
 		NavTweenOpen:Play()
 		NavTogglebtnOpen:Play()
 
@@ -885,6 +934,8 @@ function Library:Window(args)
 
 		NavTweenOpen.Completed:Connect(function()
 			Library:tween(Version, {TextTransparency = 0})
+
+			NavAction = false
 
 			for i,v in pairs(Layout:GetChildren()) do
 				if not string.find(v.Name:lower(), "template") then
@@ -907,13 +958,37 @@ function Library:Window(args)
 	end
 
 	UserInputService.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 and NavToggleHover then
+		if input.UserInputType == Enum.UserInputType.MouseButton1 and NavToggleHover and not NavAction then
 			if NavOpen then
 				CloseNavigation()
 			else
 				OpenNavigation()
 			end
 			NavOpen = not NavOpen
+		end
+	end)
+
+	local function ShowToolTip(s)
+		ToolTipText.Text = tostring(s)
+		ToolTip.Size = UDim2.fromOffset(ToolTipText.TextBounds.X + 2, 17)
+		
+		Library:tween(ToolTip, {BackgroundTransparency = 0})
+		Library:tween(ToolTipText, {TextTransparency = 0})
+		
+		ToolTip.Visible = true
+		This.ShowingToolTip = true
+	end
+	
+	local function HideToolTip()
+		Library:tween(ToolTip, {BackgroundTransparency = 1})
+		Library:tween(ToolTipText, {TextTransparency = 1})
+		This.ShowingToolTip = false
+	end
+	
+	RenderStepped(function()
+		if This.ShowingToolTip then
+			ToolTip.Position = UDim2.fromOffset(Mouse.X - 5, Mouse.Y - 15)
+			task.wait()
 		end
 	end)
 
@@ -1054,7 +1129,7 @@ function Library:Window(args)
 			args = Library:Validate({
 				Text = "Tab",
 				Icon = "",
-				NotificationText = nil,
+				ToolTip = nil,
 				Callback = function() end
 			}, args or {})
 
@@ -1087,6 +1162,10 @@ function Library:Window(args)
 				if NavOpen == false then
 					Button.Hover = true
 
+					if args.ToolTip ~= nil or args.ToolTip ~= false then
+						ShowToolTip(args.ToolTip)
+					end
+
 					if not Button.MouseDown then
 						Library:tween(RenderedButton, {BackgroundColor3 = Color3.fromRGB(53, 53, 53)})
 						Library:tween(RenderedButton.UIStrokeTemplateButton, {Transparency = 0})
@@ -1097,6 +1176,14 @@ function Library:Window(args)
 
 			RenderedButton.MouseLeave:Connect(function()
 				Button.Hover = false
+
+				if args.ToolTip ~= nil then
+					task.delay(.1, function()
+						if not Button.Hover then
+							HideToolTip()
+						end
+					end)
+				end
 
 				if not Button.MouseDown then
 					Library:tween(RenderedButton, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
@@ -1110,10 +1197,6 @@ function Library:Window(args)
 					Button.MouseDown = true
 					Library:tween(RenderedButton, {BackgroundColor3 = Color3.fromRGB(68,68,68)})
 
-					if args.NotificationText ~= nil then
-						warn("Notifications aren't done yet")
-					end
-
 					args.Callback()
 				end
 			end)
@@ -1121,10 +1204,12 @@ function Library:Window(args)
 			UserInputService.InputEnded:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 and Button.MouseDown then
 					Button.MouseDown = false
-					Library:tween(RenderedButton, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
-					
+
 					if not Button.Hover then
 						Library:tween(RenderedButton.UIStrokeTemplateButton, {Transparency = 1})
+						Library:tween(RenderedButton, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
+					else
+						Library:tween(RenderedButton, {BackgroundColor3 = Color3.fromRGB(53, 53, 53)})
 					end
 				end
 			end)
