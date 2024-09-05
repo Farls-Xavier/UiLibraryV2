@@ -769,6 +769,7 @@ function Library:Window(args)
 	UiStrokeTemplatePlayerInfo.Color = Color3.fromRGB(67,67,67)
 
 	TemplateLabel.Name = "TemplateLabel"
+	TemplateLabel.Visible = false
 	TemplateLabel.Parent = TemplateTab
 	TemplateLabel.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
 	TemplateLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1405,6 +1406,7 @@ function Library:Window(args)
 			local Label = {}
 
 			local RenderedLabel = TemplateLabel:Clone()
+			RenderedLabel.Visible = true
 			local Text = RenderedLabel.TextLabelTemplateLabel
 
 			RenderedLabel.Parent = TabFrame.Holder
@@ -1540,7 +1542,20 @@ task.defer(function()
 	if self._Window == nil then
 		Roblox_Notification("Would you like to load an example?", {"Yes", "No"}, function(answer)
 			if answer == "Yes" then
-				loadstring(game:HttpGet(self.url.."Example.lua"))
+				local ExampleWindow = self:Window({Title = "Example"})
+
+				local Tab1 = ExampleWindow:Tab({Text = "Tab 1", Icon = "rbxassetid://18700960425"})
+				local Tab2 = ExampleWindow:Tab({Text = "Tab 2", Icon = "rbxassetid://18703386053"})
+				local Tab3 = ExampleWindow:Tab({Text = "Tab 3"})
+
+				Tab1:Button({Text = "A button"})
+				Tab1:Toggle({Text = "A toggle"})
+
+				Tab2:ImageLabel({Image = "rbxassetid://18703386053"})
+				Tab2:Keybind({Text = "A keybind", Keybind = Enum.KeyCode.F})
+
+				Tab3:Player({Player = Players.LocalPlayer})
+				Tab3:Label({Text = "A label"})
 			end
 		end)
 	end
