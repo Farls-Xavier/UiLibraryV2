@@ -42,16 +42,6 @@ for i,v in pairs(game.CoreGui:GetDescendants()) do
 	end
 end
 
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "UiLibUi"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = RunService:IsStudio() and Player.PlayerGui or game.CoreGui
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-local RefrenceValue = Instance.new("StringValue", ScreenGui)
-RefrenceValue.Name = "ReferenceValue"
-RefrenceValue.Value = "Reference Value"
-
 local RenderSteps = {}
 
 local function RenderStepped(func)
@@ -68,11 +58,6 @@ function Library:Validate(defaults, args)
 		end
 	end     
 	return args
-end
-
-function Library:destroy()
-	ScreenGui:Destroy()
-	Library = nil
 end
 
 function Roblox_Notification(message, buttons, callback)
@@ -126,6 +111,16 @@ function Library:Window(args)
 		TargetPlayer = nil
 	}
 
+	local ScreenGui = Instance.new("ScreenGui")
+	ScreenGui.Name = "UiLibUi"
+	ScreenGui.ResetOnSpawn = false
+	ScreenGui.Parent = RunService:IsStudio() and Player.PlayerGui or game.CoreGui
+	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+	local RefrenceValue = Instance.new("StringValue", ScreenGui)
+	RefrenceValue.Name = "ReferenceValue"
+	RefrenceValue.Value = "Reference Value"
+
 	if Config.Chat == true then
 		Roblox_Notification("Do you actually wanna use this trash chat?", {"Yes", "No"}, function(answer)
 			if answer == "Yes" then
@@ -134,13 +129,13 @@ function Library:Window(args)
 		end)
 	end
 
-	printColor("Gulp uhhh chat module soon :fire: !!!!", Color3.fromRGB(123, 255, 0))
+	printColor("Gulp uhhh chat module soon :fire: !!!!", Color3.fromRGB(98, 0, 255))
 
 	Library._Window = This
 	local Minimized = false
 
 	coroutine.wrap(function()
-		while task.wait(.1) do
+		while task.wait(.5) do
 			if LoadedVersion ~= Library:GetVersion() and NotifiedVersion ~= true then
 				NotifiedVersion = true
 				printColor("Ui library has updated from version: "..LoadedVersion.." to: "..Library:GetVersion(), Color3.fromRGB(97, 85, 165))
@@ -1542,20 +1537,8 @@ task.defer(function()
 	if self._Window == nil then
 		Roblox_Notification("Would you like to load an example?", {"Yes", "No"}, function(answer)
 			if answer == "Yes" then
-				local ExampleWindow = self:Window({Title = "Example"})
-
-				local Tab1 = ExampleWindow:Tab({Text = "Tab 1", Icon = "rbxassetid://18700960425"})
-				local Tab2 = ExampleWindow:Tab({Text = "Tab 2", Icon = "rbxassetid://18703386053"})
-				local Tab3 = ExampleWindow:Tab({Text = "Tab 3"})
-
-				Tab1:Button({Text = "A button"})
-				Tab1:Toggle({Text = "A toggle"})
-
-				Tab2:ImageLabel({Image = "rbxassetid://18703386053"})
-				Tab2:Keybind({Text = "A keybind", Keybind = Enum.KeyCode.F})
-
-				Tab3:Player({Player = Players.LocalPlayer})
-				Tab3:Label({Text = "A label"})
+				printColor("Loading example.", Color3.fromRGB(35,35,35))
+				loadstring(game:HttpGet(self.url.."Example.lua"))()
 			end
 		end)
 	end
