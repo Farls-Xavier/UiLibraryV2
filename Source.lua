@@ -62,13 +62,13 @@ end
 
 function Roblox_Notification(message, buttons, callback)
 	buttons = buttons or {"Yes", "No"}
-	callback = callback or function ()
+	callback = callback or function(answer)
 		warn("Callback is set to nil")
 	end
-	
+
 	local BindableFunction = Instance.new("BindableFunction")
-	BindableFunction.OnInvoke = function()
-		callback()
+	BindableFunction.OnInvoke = function(answer)
+		callback(answer)
 		task.delay(.5, function()
 			BindableFunction:Destroy()
 		end)
@@ -1406,11 +1406,19 @@ function Library:Window(args)
 
 			RenderedLabel.Parent = TabFrame.Holder
 			Text.Font = args.Font
-			Text.Text = "  "..args.Text
 
 			function Label:SetText(s)
 				Text.Text = tostring(s)	
 			end
+
+			function Label:TypeWrite(s)
+				for i = 1, #s, 1 do
+					Text.Text = string.sub("  "..s, 1, i)
+					task.wait(0.05)
+				end
+			end
+
+			Label:TypeWrite(args.Text)
 
 			return Label
 		end
@@ -1535,7 +1543,7 @@ end
 
 task.defer(function()
 	if self._Window == nil then
-		Roblox_Notification("Would you like to load an example?", {"Yes", "No"}, function(answer)
+		Roblox_Notification("Would you like to load an example?", {"Yes", "No"}, function(answer)		
 			if answer == "Yes" then
 				printColor("Loading example.", Color3.fromRGB(35,35,35))
 				loadstring(game:HttpGet(self.url.."Example.lua"))()
