@@ -985,23 +985,17 @@ function Library:Window(args)
 		end
 	end)
 
-	local function CreateToolTip()
+	local function CreateToolTip(s)
 		local NewToolTip = ToolTip:Clone()
 		NewToolTip.Parent = ScreenGui
-
+		NewToolTip.ToolTipText.Text = s
+		NewToolTip.Size = UDim2.fromOffset(NewToolTip.ToolTipText.TextBounds.X + 2, 17)
 		NewToolTip.BackgroundTransparency = 1
 		NewToolTip.ToolTipText.TextTransparency = 1
 
 		return NewToolTip
 	end
 	
-	--[[RenderStepped(function()
-		if This.ShowingToolTip then
-			ToolTip.Position = UDim2.fromOffset(Mouse.X - 5, Mouse.Y - 15)
-			task.wait()
-		end
-	end)]]
-
 	-- All other hover stuffs
 	do
 		Version.MouseEnter:Connect(function()
@@ -1150,8 +1144,7 @@ function Library:Window(args)
 			}
 
 			if args.ToolTip ~= nil then
-				Button.ToolTip = CreateToolTip()
-				Button.ToolTip.ToolTipText.Text = args.ToolTip
+				Button.ToolTip = CreateToolTip(args.ToolTip)
 
 				RenderStepped(function()
 					if Button.ToolTip.Visible == true then
@@ -1256,8 +1249,7 @@ function Library:Window(args)
 			}
 
 			if args.ToolTip ~= nil then
-				Toggle.ToolTip = CreateToolTip()
-				Toggle.ToolTip.ToolTipText.Text = args.ToolTip
+				Toggle.ToolTip = CreateToolTip(args.ToolTip)
 
 				RenderStepped(function()
 					if Toggle.ToolTip.Visible == true then
@@ -1349,7 +1341,7 @@ function Library:Window(args)
 
 			return Toggle
 		end
-		
+
 		function Tab:ImageLabel(args)
 			args = Library:Validate({
 				Image = "rbxassetid://18703386053",
@@ -1363,9 +1355,7 @@ function Library:Window(args)
 			}
 
 			if args.ToolTip ~= nil then
-				ImageLabel.ToolTip = CreateToolTip()
-
-				ImageLabel.ToolTip.ToolTipText.Text = args.ToolTip
+				ImageLabel.ToolTip = CreateToolTip(args.ToolTip)
 
 				RenderStepped(function()
 					if ImageLabel.ToolTip.Visible == true then
@@ -1387,7 +1377,7 @@ function Library:Window(args)
 			RenderedImageLabel.MouseEnter:Connect(function()
 				if NavOpen == false then
 
-					ImageLabel.ToolTip.Visible = false
+					ImageLabel.ToolTip.Visible = true
 
 					if ImageLabel.ToolTip ~= nil then
 						Library:tween(ImageLabel.ToolTip, {BackgroundTransparency = 0})
@@ -1438,7 +1428,7 @@ function Library:Window(args)
 
 			return ImageLabel 
 		end
-		
+
 		function Tab:Keybind(args)
 			args = Library:Validate({
 				Text = "  Keybind",
@@ -1458,8 +1448,7 @@ function Library:Window(args)
 			}
 
 			if args.ToolTip ~= nil then
-				Keybind.ToolTip = CreateToolTip()
-				Keybind.ToolTip.ToolTipText.Text = args.ToolTip
+				Keybind.ToolTip = CreateToolTip(args.ToolTip)
 
 				RenderStepped(function()
 					if Keybind.ToolTip.Visible == true then
@@ -1596,8 +1585,7 @@ function Library:Window(args)
 			}
 
 			if args.ToolTip ~= nil then
-				Label.ToolTip = CreateToolTip()
-				Label.ToolTip.ToolTipText.Text = args.ToolTip
+				Label.ToolTip = CreateToolTip(args.ToolTip)
 
 				RenderStepped(function()
 					if Label.ToolTip.Visible == true then
@@ -1614,17 +1602,18 @@ function Library:Window(args)
 			Text.Font = args.Font
 
 			function Label:SetText(s)
-				Text.Text = "  "..tostring(s)	
+				Text.Text = " "..tostring(s)	
 			end
 
 			function Label:TypeWrite(s)
 				for i = 1, #s, 1 do
-					Text.Text = string.sub("  "..s, 1, i)
+					Text.Text = string.sub(" "..s, 1, i)
 					task.wait(0.05)
 				end
 			end
 
 			Label:SetText(args.Text)
+			RenderedLabel.Size = UDim2.fromOffset(Text.TextBounds.X + 2, 25)
 
 			RenderedLabel.MouseEnter:Connect(function()
 				Label.Hover = true
