@@ -112,10 +112,13 @@ local NotifiedVersion = false
 function Library:Window(args)
 	args = Library:Validate({
 		Title = "Ui Library",
-		ToolTipColor = Color3.fromRGB(255,255,255),
-		ToolTipTextColor = Color3.fromRGB(0,0,0),
+		ToolTipColor = "White", -- "Grey" "Black"
 		OnClose = function() end
 	}, args or {})
+
+	if args.ToolTipColor == "White" then
+		
+	end
 
 	local This = {
 		CurrentTab = nil,
@@ -830,10 +833,10 @@ function Library:Window(args)
 	ToolTip.Parent = ScreenGui
 	ToolTip.Visible = false
 	ToolTip.BackgroundTransparency = 1
-	ToolTip.BackgroundColor3 = args.ToolTipColor
 	ToolTip.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	ToolTip.BorderSizePixel = 0
 	ToolTip.Position = UDim2.new(0.227044031, 0, 0.367624819, 0)
+	ToolTip.BackgroundTransparency = 0
 	ToolTip.Size = UDim2.new(0, 70, 0, 17)
 	ToolTip.ZIndex = 5
 
@@ -851,11 +854,25 @@ function Library:Window(args)
 	ToolTipText.Size = UDim2.new(1, 0, 1, 0)
 	ToolTipText.Font = Enum.Font.SourceSans
 	ToolTipText.Text = "ToolTip"
-	ToolTipText.TextColor3 = args.ToolTipTextColor
 	ToolTipText.TextSize = 14.000
+	ToolTipText.TextTransparency = 0
 	ToolTipText.TextWrapped = false
 
 	UiTools.MakeDraggable(DragBar, MainFrame, 0.07)
+
+	if args.ToolTipColor == "White" then
+		ToolTipText.TextColor3 = Color3.fromRGB(0,0,0)
+		ToolTip.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	elseif args.ToolTipColor == "Grey" then
+		ToolTipText.TextColor3 = Color3.fromRGB(255,255,255)
+		ToolTip.BackgroundColor3 = Color3.fromRGB(75,75,75)
+	elseif args.ToolTipColor == "Black" then
+		ToolTipText.TextColor3 = Color3.fromRGB(255,255,255)
+		ToolTip.BackgroundColor3 = Color3.fromRGB(10,10,10)
+	else
+		ToolTipText.TextColor3 = Color3.fromRGB(0,0,0)
+		ToolTip.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	end
 
 	local NavOpen = true
 	local NavAction = false
@@ -968,29 +985,22 @@ function Library:Window(args)
 		end
 	end)
 
-	local function ShowToolTip(s)
-		ToolTipText.Text = tostring(s)
-		ToolTip.Size = UDim2.fromOffset(ToolTipText.TextBounds.X + 2, 17)
-		
-		Library:tween(ToolTip, {BackgroundTransparency = 0})
-		Library:tween(ToolTipText, {TextTransparency = 0})
-		
-		ToolTip.Visible = true
-		This.ShowingToolTip = true
+	local function CreateToolTip()
+		local NewToolTip = ToolTip:Clone()
+		NewToolTip.Parent = ScreenGui
+
+		NewToolTip.BackgroundTransparency = 1
+		NewToolTip.ToolTipText.TextTransparency = 1
+
+		return NewToolTip
 	end
 	
-	local function HideToolTip()
-		Library:tween(ToolTip, {BackgroundTransparency = 1})
-		Library:tween(ToolTipText, {TextTransparency = 1})
-		This.ShowingToolTip = false
-	end
-	
-	RenderStepped(function()
+	--[[RenderStepped(function()
 		if This.ShowingToolTip then
 			ToolTip.Position = UDim2.fromOffset(Mouse.X - 5, Mouse.Y - 15)
 			task.wait()
 		end
-	end)
+	end)]]
 
 	-- All other hover stuffs
 	do
@@ -1135,8 +1145,20 @@ function Library:Window(args)
 
 			local Button = {
 				Hover = false,
-				MouseDown = false
+				MouseDown = false,
+				ToolTip = nil
 			}
+
+			if args.ToolTip ~= nil then
+				Button.ToolTip = CreateToolTip()
+				Button.ToolTip.ToolTipText.Text = args.ToolTip
+
+				RenderStepped(function()
+					if Button.ToolTip.Visible == true then
+						Button.ToolTip.Position = UDim2.fromOffset(Mouse.X - 5, Mouse.Y - 15)
+					end
+				end)
+			end
 
 			local RenderedButton = TemplateButton:Clone()
 			RenderedButton.Visible = true
@@ -1162,8 +1184,11 @@ function Library:Window(args)
 				if NavOpen == false then
 					Button.Hover = true
 
-					if args.ToolTip ~= nil or args.ToolTip ~= false then
-						ShowToolTip(args.ToolTip)
+					if Button.ToolTip ~= nil then
+						Button.ToolTip.Visible = true
+
+						Library:tween(Button.ToolTip, {BackgroundTransparency = 0})
+						Library:tween(Button.ToolTip.ToolTipText, {TextTransparency = 0})
 					end
 
 					if not Button.MouseDown then
@@ -1177,11 +1202,10 @@ function Library:Window(args)
 			RenderedButton.MouseLeave:Connect(function()
 				Button.Hover = false
 
-				if args.ToolTip ~= nil then
-					task.delay(.1, function()
-						if not Button.Hover then
-							HideToolTip()
-						end
+				if Button.ToolTip ~= nil then
+					Library:tween(Button.ToolTip, {BackgroundTransparency = 1})
+					Library:tween(Button.ToolTip.ToolTipText, {TextTransparency = 1}, function()
+						Button.ToolTip.Visible = false
 					end)
 				end
 
@@ -1216,18 +1240,31 @@ function Library:Window(args)
 
 			return Button
 		end
-		
+
 		function Tab:Toggle(args)
 			args = Library:Validate({
 				Text = "Toggle",
+				ToolTip = nil,
 				Callback = function() end
 			}, args or {})
 
 			local Toggle = {
 				Hover = false,
 				MouseDown = false,
-				State = false
+				State = false,
+				ToolTip = nil
 			}
+
+			if args.ToolTip ~= nil then
+				Toggle.ToolTip = CreateToolTip()
+				Toggle.ToolTip.ToolTipText.Text = args.ToolTip
+
+				RenderStepped(function()
+					if Toggle.ToolTip.Visible == true then
+						Toggle.ToolTip.Position = UDim2.fromOffset(Mouse.X - 5, Mouse.Y - 15)
+					end
+				end)
+			end
 
 			local RenderedToggle = TemplateToggle:Clone()
 			RenderedToggle.Visible = true
@@ -1256,6 +1293,13 @@ function Library:Window(args)
 				if NavOpen == false then
 					Toggle.Hover = true
 
+					if Toggle.ToolTip ~= nil then
+						Toggle.ToolTip.Visible = true
+
+						Library:tween(Toggle.ToolTip, {BackgroundTransparency = 0})
+						Library:tween(Toggle.ToolTip.ToolTipText, {TextTransparency = 0})
+					end
+
 					if not Toggle.MouseDown then
 						Library:tween(ToggleText, {TextColor3 = Color3.fromRGB(255,255,255)})
 						Library:tween(RenderedToggle, {BackgroundColor3 = Color3.fromRGB(53, 53, 53)})
@@ -1267,7 +1311,14 @@ function Library:Window(args)
 
 			RenderedToggle.MouseLeave:Connect(function()
 				Toggle.Hover = false
-				
+
+				if Toggle.ToolTip ~= nil then
+					Library:tween(Toggle.ToolTip, {BackgroundTransparency = 1})
+					Library:tween(Toggle.ToolTip.ToolTipText, {TextTransparency = 1}, function()
+						Toggle.ToolTip.Visible = false
+					end)					
+				end
+
 				if not Toggle.MouseDown then
 					Library:tween(ToggleText, {TextColor3 = Color3.fromRGB(200,200,200)})
 					Library:tween(RenderedToggle, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
@@ -1286,10 +1337,10 @@ function Library:Window(args)
 			UserInputService.InputEnded:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 and Toggle.MouseDown then
 					Toggle.MouseDown = false
-					
+
 					Library:tween(RenderedToggle, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
 					Library:tween(RenderedToggle.CheckHolder, {BackgroundColor3 = Color3.fromRGB(53, 53, 53)})
-					
+
 					if not Toggle.Hover then
 						Library:tween(RenderedToggle.UIStrokeTemplateToggle, {Transparency = 1})
 					end
@@ -1302,12 +1353,26 @@ function Library:Window(args)
 		function Tab:ImageLabel(args)
 			args = Library:Validate({
 				Image = "rbxassetid://18703386053",
+				ToolTip = nil
 			}, args or {})
 
 			local ImageLabel = {
 				Hover = false,
-				MouseDown = false
+				MouseDown = false,
+				ToolTip = nil
 			}
+
+			if args.ToolTip ~= nil then
+				ImageLabel.ToolTip = CreateToolTip()
+
+				ImageLabel.ToolTip.ToolTipText.Text = args.ToolTip
+
+				RenderStepped(function()
+					if ImageLabel.ToolTip.Visible == true then
+						ImageLabel.ToolTip.Position = UDim2.fromOffset(Mouse.X - 5, Mouse.Y - 15)
+					end
+				end)
+			end
 
 			local RenderedImageLabel = TemplateImage:Clone()
 			RenderedImageLabel.Parent = TabFrame.Holder
@@ -1321,6 +1386,14 @@ function Library:Window(args)
 
 			RenderedImageLabel.MouseEnter:Connect(function()
 				if NavOpen == false then
+
+					ImageLabel.ToolTip.Visible = false
+
+					if ImageLabel.ToolTip ~= nil then
+						Library:tween(ImageLabel.ToolTip, {BackgroundTransparency = 0})
+						Library:tween(ImageLabel.ToolTip.ToolTipText, {TextTransparency = 0})
+					end
+
 					ImageLabel.Hover = true
 					if not ImageLabel.MouseDown then
 						Library:tween(RenderedImageLabel, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
@@ -1331,6 +1404,12 @@ function Library:Window(args)
 
 			RenderedImageLabel.MouseLeave:Connect(function()
 				ImageLabel.Hover = false
+
+				Library:tween(ImageLabel.ToolTip, {BackgroundTransparency = 1})
+				Library:tween(ImageLabel.ToolTip.ToolTipText, {TextTransparency = 1}, function()
+					ImageLabel.ToolTip.Visible = false
+				end)
+
 				if not ImageLabel.MouseDown then
 					Library:tween(RenderedImageLabel, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
 					Library:tween(RenderedImageLabel.UiStrokeTemplateImage, {Transparency = 1})
@@ -1364,6 +1443,7 @@ function Library:Window(args)
 			args = Library:Validate({
 				Text = "  Keybind",
 				Keybind = Enum.KeyCode.One,
+				ToolTip = nil,
 				Callback = function() end
 			}, args or {})
 
@@ -1373,8 +1453,20 @@ function Library:Window(args)
 				Key = args.Keybind,
 				BindTextHover = false,
 				SettingKey = false,
-				Connection = nil
+				Connection = nil,
+				ToolTip = nil
 			}
+
+			if args.ToolTip ~= nil then
+				Keybind.ToolTip = CreateToolTip()
+				Keybind.ToolTip.ToolTipText.Text = args.ToolTip
+
+				RenderStepped(function()
+					if Keybind.ToolTip.Visible == true then
+						Keybind.ToolTip.Position = UDim2.fromOffset(Mouse.X - 5, Mouse.Y - 15)
+					end
+				end)
+			end
 
 			local keys = {
 				[Enum.KeyCode.One] = "1",
@@ -1409,11 +1501,17 @@ function Library:Window(args)
 
 			RenderedKeybind.MouseEnter:Connect(function()
 				if NavOpen then return end
-
 				Keybind.Hover = true
+
+				if Keybind.ToolTip ~= nil then
+					Keybind.ToolTip.Visible = true
+					Library:tween(Keybind.ToolTip, {BackgroundTransparency = 0})
+					Library:tween(Keybind.ToolTip.ToolTipText, {TextTransparency = 0})
+				end
 
 				if not Keybind.MouseDown then
 					Library:tween(RenderedKeybind.UiStrokeTemplateBind, {Transparency = 0})
+					Library:tween(RenderedKeybind, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
 					Library:tween(RenderedKeybind.TextLabelTemplateBind, {TextColor3 = Color3.fromRGB(255,255,255)})
 				end
 			end)
@@ -1421,7 +1519,15 @@ function Library:Window(args)
 			RenderedKeybind.MouseLeave:Connect(function()
 				Keybind.Hover = false
 
+				if Keybind.ToolTip ~= nil then
+					Library:tween(Keybind.ToolTip, {BackgroundTransparency = 1})
+					Library:tween(Keybind.ToolTip.ToolTipText, {TextTransparency = 1}, function()
+						Keybind.ToolTip.Visible = false
+					end)
+				end
+
 				if not Keybind.MouseDown then
+					Library:tween(RenderedKeybind, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
 					Library:tween(RenderedKeybind.UiStrokeTemplateBind, {Transparency = 1})
 					Library:tween(RenderedKeybind.TextLabelTemplateBind, {TextColor3 = Color3.fromRGB(200,200,200)})
 				end
@@ -1480,10 +1586,25 @@ function Library:Window(args)
 			args = Library:Validate({
 				Text = "",
 				TextColor = Color3.fromRGB(200,200,200),
+				ToolTip = nil,
 				Font = Enum.Font.GothamMedium
 			}, args or {})
 
-			local Label = {}
+			local Label = {
+				Hover = false,
+				ToolTip = nil
+			}
+
+			if args.ToolTip ~= nil then
+				Label.ToolTip = CreateToolTip()
+				Label.ToolTip.ToolTipText.Text = args.ToolTip
+
+				RenderStepped(function()
+					if Label.ToolTip.Visible == true then
+						Label.ToolTip.Position = UDim2.fromOffset(Mouse.X - 5, Mouse.Y - 15)
+					end
+				end)
+			end
 
 			local RenderedLabel = TemplateLabel:Clone()
 			RenderedLabel.Visible = true
@@ -1493,7 +1614,7 @@ function Library:Window(args)
 			Text.Font = args.Font
 
 			function Label:SetText(s)
-				Text.Text = tostring(s)	
+				Text.Text = "  "..tostring(s)	
 			end
 
 			function Label:TypeWrite(s)
@@ -1503,7 +1624,37 @@ function Library:Window(args)
 				end
 			end
 
-			Label:TypeWrite(args.Text)
+			Label:SetText(args.Text)
+
+			RenderedLabel.MouseEnter:Connect(function()
+				Label.Hover = true
+				
+				if Label.ToolTip ~= nil then
+					Label.ToolTip.Visible = true
+					
+					Library:tween(Label.ToolTip, {BackgroundTransparency = 0})
+					Library:tween(Label.ToolTip.ToolTipText, {TextTransparency = 0})
+				end
+				
+				Library:tween(RenderedLabel, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
+				Library:tween(RenderedLabel.UIStrokeTemplateLabel, {Transparency = 0})
+				Library:tween(Text, {TextColor3 = Color3.fromRGB(255,255,255)})
+			end)
+
+			RenderedLabel.MouseLeave:Connect(function()
+				Label.Hover = false
+				
+				if Label.ToolTip ~= nil then
+					Library:tween(Label.ToolTip, {BackgroundTransparency = 1})
+					Library:tween(Label.ToolTip.ToolTipText, {TextTransparency = 1}, function()
+						Label.ToolTip.Visible = false
+					end)
+				end
+				
+				Library:tween(RenderedLabel, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
+				Library:tween(RenderedLabel.UIStrokeTemplateLabel, {Transparency = 1})
+				Library:tween(Text, {TextColor3 = Color3.fromRGB(200,200,200)})
+			end)
 
 			return Label
 		end
