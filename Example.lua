@@ -3,15 +3,10 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Farls
 
 local Window = Library:Window({Title = "Example"})
 
-local Tab1 = Window:Tab({Text = "Tab 1", Icon = "rbxassetid://18700960425"})
-local Tab2 = Window:Tab({Text = "Tab 2", Icon = "rbxassetid://18703386053"})
-local Tab3 = Window:Tab({Text = "Tab 3"})
+local Tab = Window:Tab()
 
-Tab1:Button({Text = "A button"})
-Tab1:Toggle({Text = "A toggle"})
-
-Tab2:ImageLabel({Image = "rbxassetid://18703386053"})
-Tab2:Keybind({Text = "A keybind", Keybind = Enum.KeyCode.F})
-
-Tab3:Player({Player = Players.LocalPlayer})
-Tab3:Label({Text = "A label"})
+local Button = Tab:Button({Text = "A Button", ToolTip = "Press me"})
+local Toggle = Tab:Toggle({Text = "A Toggle", ToolTip = "Toggle me"})
+local Image = Tab:ImageLabel({Image = "rbxassetid://133772874267731", ToolTip = "View me"})
+local Bind = Tab:Keybind({Text = "A Bind", ToolTip = "Press my key"})
+local Label = Tab:Label({Text = "A Label with tooltip", ToolTip = "Read me"})
