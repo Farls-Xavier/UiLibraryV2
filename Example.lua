@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Farls-Xavier/UiLibraryV2/main/Source.lua"))()
 
-local Window = Library:Window({Title = "Example"})
+local Window = Library:Window({Title = "Example", ToolTipColor = "White"}) -- White, Grey, Black
 
 local Tab = Window:Tab()
 
