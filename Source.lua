@@ -33,8 +33,8 @@ local StarterGui = game:GetService("StarterGui")
 local HttpService = game:GetService("HttpService")
 local Config = HttpService:JSONDecode(readfile(self.path.."\\Config.json"))
 local UiTools = loadstring(game:HttpGet(Library.url.."UiTools.lua"))()
-local Player = Players.LocalPlayer
-local Mouse = Player:GetMouse()
+--local Player = Players.LocalPlayer
+local Mouse = Players.LocalPlayer:GetMouse()
 
 for i,v in pairs(game.CoreGui:GetDescendants()) do
 	if v:IsA("StringValue") and v.Name == "ReferenceValue" and v.Parent.Name == "UiLibUi" --[[and Config.MultiGui == false]] then
@@ -129,7 +129,7 @@ function Library:Window(args)
 	local ScreenGui = Instance.new("ScreenGui")
 	ScreenGui.Name = "UiLibUi"
 	ScreenGui.ResetOnSpawn = false
-	ScreenGui.Parent = RunService:IsStudio() and Player.PlayerGui or game.CoreGui
+	ScreenGui.Parent = game.CoreGui
 	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 	local RefrenceValue = Instance.new("StringValue", ScreenGui)
@@ -954,7 +954,7 @@ function Library:Window(args)
 
 			NavAction = false
 
-			for i,v in pairs(Layout:GetChildren()) do
+			for _,v in pairs(Layout:GetChildren()) do
 				if not string.find(v.Name:lower(), "template") then
 					if v:IsA("TextButton") then
 						Library:tween(v, {BackgroundTransparency = 0})
@@ -995,7 +995,7 @@ function Library:Window(args)
 
 		return NewToolTip
 	end
-	
+
 	-- All other hover stuffs
 	do
 		Version.MouseEnter:Connect(function()
@@ -1725,8 +1725,8 @@ function Library:Window(args)
 						return
 					end
 
-					if workspace.CurrentCamera.CameraSubject ~= Player.Character.Humanoid then
-						workspace.CurrentCamera.CameraSubject = Player.Character.Humanoid
+					if workspace.CurrentCamera.CameraSubject ~= Players.LocalPlayer.Character.Humanoid then
+						workspace.CurrentCamera.CameraSubject = Players.LocalPlayer.Character.Humanoid
 					else
 						workspace.CurrentCamera.CameraSubject = args.Player.Character:WaitForChild("Humanoid")
 					end
@@ -1774,6 +1774,14 @@ task.defer(function()
 				loadstring(game:HttpGet(self.url.."Example.lua"))()
 			end
 		end)
+	else
+		local _Players = self._Window:Tab({Text = "Players"})
+
+		for _,v in pairs(Players:GetPlayers()) do
+			if v ~= Players.LocalPlayer then
+				_Players:Player({Player = v})
+			end
+		end
 	end
 end)
 
