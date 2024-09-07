@@ -116,10 +116,6 @@ function Library:Window(args)
 		OnClose = function() end
 	}, args or {})
 
-	if args.ToolTipColor == "White" then
-		
-	end
-
 	local This = {
 		CurrentTab = nil,
 		CurrentTabName = nil,
@@ -1775,6 +1771,8 @@ task.defer(function()
 			end
 		end)
 	else
+		printColor("Making players tgab ok!", Color3.fromRGB(125, 170, 255))
+
 		local _Players = self._Window:Tab({Text = "Players"})
 
 		for _,v in pairs(Players:GetPlayers()) do
