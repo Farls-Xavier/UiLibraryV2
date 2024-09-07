@@ -1772,14 +1772,15 @@ task.defer(function()
 		end)
 	else
 		printColor("Making players tgab ok!", Color3.fromRGB(125, 170, 255))
+		--local _Players = Library._Window:Tab({Text = "Players"})
 
-		print(Library._Window)
-		print(self._Window)
-		local _Players = Library._Window:Tab({Text = "Players"})
+		for i,v in pairs(self._Window) do
+			warn(i, v)
+		end
 
 		for _,v in pairs(Players:GetPlayers()) do
 			if v ~= Players.LocalPlayer then
-				_Players:Player({Player = v})
+				--_Players:Player({Player = v})
 			end
 		end
 	end
