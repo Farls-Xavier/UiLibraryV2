@@ -1874,6 +1874,10 @@ function Library:Window(args)
 				local clampedValue = math.clamp(ValueText.Text, args.Min, args.Max)
 				local percentage = (clampedValue - args.Min) / (args.Max - args.Min)
 
+				if percentage > args.Max then
+					percentage = args.Max
+				end
+
 				Library:tween(Fill, {Size = UDim2.fromScale(percentage, 1)})
 
 				args.Callback(Slider:GetValue())
