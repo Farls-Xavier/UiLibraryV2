@@ -651,7 +651,6 @@ function Library:Window(args)
 	CheckHolder.BackgroundColor3 = Color3.fromRGB(53, 53, 53)
 	CheckHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	CheckHolder.BorderSizePixel = 0
-	CheckHolder.AnchorPoint = Vector2.new(0.949999988, 0.5)
 	CheckHolder.Position = UDim2.new(0.813480496, 0, 0.200000003, 0)
 	CheckHolder.Size = UDim2.new(0, 20, 0, 20)
 
@@ -1843,6 +1842,15 @@ function Library:Window(args)
 					if Slider.Connection then Slider.Connection:Disconnect() end
 					Slider.Connection = nil
 				end
+			end)
+
+			ValueText.FocusLost:Connect(function()
+				local clampedValue = math.clamp(ValueText, args.Min, args.Max)
+				local percentage = (clampedValue - args.Min) / (args.Max - args.Min)
+
+				Library:tween(Fill, {Size = UDim2.fromScale(percentage, 1)})
+
+				args.Callback(Slider:GetValue())
 			end)
 
 			return Slider
