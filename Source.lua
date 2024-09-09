@@ -1748,14 +1748,26 @@ function Library:Window(args)
 				Max = 100,
 				Default = 50,
 				decimals = false,
+				ToolTip = nil,
 				Callback = function(v) print(v) end
 			}, args or {})
 
 			local Slider = {
 				Hover = false,
 				MouseDown = false,
+				ToolTip = nil,
 				Connection = nil
 			}
+
+			if args.ToolTip ~= nil then
+				Slider.ToolTip = CreateToolTip(args.ToolTip)
+
+				RenderStepped(function()
+					if Slider.ToolTip.Visible == true then
+						Slider.ToolTip.Position = UDim2.fromOffset(Mouse.X - 5, Mouse.Y - 15)
+					end
+				end)
+			end
 
 			local RenderedSlider = TemplateSlider:Clone()
 			local Back = RenderedSlider.TemplateSliderBackFrame
@@ -1802,7 +1814,7 @@ function Library:Window(args)
 			Back.MouseEnter:Connect(function()
 				Slider.Hover = true
 
-				Library:tween(Fill, {BackgroundColor3 = Color3.fromRGB(85,85,85)})
+				Library:tween(Fill, {BackgroundColor3 = Color3.fromRGB(95,95,95)})
 			end)
 
 			Back.MouseLeave:Connect(function()
@@ -1816,11 +1828,25 @@ function Library:Window(args)
 			RenderedSlider.MouseEnter:Connect(function()
 				Library:tween(RenderedSlider.UIStrokeTemplateSlider, {Transparency = 0})
 				Library:tween(RenderedSlider, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
+
+				if Slider.ToolTip ~= nil then
+					Slider.ToolTip.Visible = true
+					
+					Library:tween(Slider.ToolTip, {BackgroundTransparency = 0})
+					Library:tween(Slider.ToolTip.ToolTipText, {TextTransparency = 0})
+				end
 			end)
 
 			RenderedSlider.MouseLeave:Connect(function()
 				Library:tween(RenderedSlider.UIStrokeTemplateSlider, {Transparency = 1})
 				Library:tween(RenderedSlider, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
+
+				if Slider.ToolTip ~= nil then
+					Library:tween(Slider.ToolTip, {BackgroundTransparency = 1})
+					Library:tween(Slider.ToolTip.ToolTipText, {TextTransparency = 1}, function()
+						Slider.ToolTip.Visible = false
+					end)
+				end
 			end)
 
 			UserInputService.InputBegan:Connect(function(input)
@@ -1845,7 +1871,7 @@ function Library:Window(args)
 			end)
 
 			ValueText.FocusLost:Connect(function()
-				local clampedValue = math.clamp(ValueText, args.Min, args.Max)
+				local clampedValue = math.clamp(ValueText.Text, args.Min, args.Max)
 				local percentage = (clampedValue - args.Min) / (args.Max - args.Min)
 
 				Library:tween(Fill, {Size = UDim2.fromScale(percentage, 1)})
