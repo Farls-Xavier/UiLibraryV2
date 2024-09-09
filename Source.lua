@@ -912,6 +912,7 @@ function Library:Window(args)
 	UICorner_3.Parent = SliderValue
 
 	TemplateNumberBox.Name = "TemplateNumberBox"
+	TemplateNumberBox.Visible = false
 	TemplateNumberBox.Parent = TemplateTab
 	TemplateNumberBox.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
 	TemplateNumberBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1980,6 +1981,9 @@ function Library:Window(args)
 			local Value = RenderedNumberBox.ValueBox
 			local Up = Value.Upbtn
 			local Down = Value.Downbtn
+
+			RenderedNumberBox.Parent = TabFrame.Holder
+			RenderedNumberBox.Visible = true
 
 			local NumberBox = {
 				UpHover = false,
