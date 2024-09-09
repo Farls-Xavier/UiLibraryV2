@@ -1993,27 +1993,25 @@ function Library:Window(args)
 
 			Value.Text = tostring(NumberBox.Value)
 
-			function NumberBox:Add(v)
-				NumberBox.Value = NumberBox.Value + v
+			function NumberBox:IncreaseValue()
+				NumberBox.Value += args.Amount
 				Value.Text = tostring(NumberBox.Value)
-
-				args.Callback(args.Value)
+				args.Callback(NumberBox.Value)
 			end
-
-			function NumberBox:Minus(v)
-				NumberBox.Value = NumberBox.Value - v
+			
+			function NumberBox:DecreaseValue()
+				NumberBox.Value -= args.Amount
 				Value.Text = tostring(NumberBox.Value)
-
-				args.Callback(args.Value)
+				args.Callback(NumberBox.Value)
 			end
 
 			RenderedNumberBox.MouseEnter:Connect(function()
-				Library:tween(RenderedNumberBox.UIStrokeTemplateSlider, {Transparency = 0})
+				Library:tween(RenderedNumberBox.UIStrokeTemplateNumberBox, {Transparency = 0})
 				Library:tween(RenderedNumberBox, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
 			end)
 
 			RenderedNumberBox.MouseLeave:Connect(function()
-				Library:tween(RenderedNumberBox.UIStrokeTemplateSlider, {Transparency = 1})
+				Library:tween(RenderedNumberBox.UIStrokeTemplateNumberBox, {Transparency = 1})
 				Library:tween(RenderedNumberBox, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
 			end)
 
@@ -2040,13 +2038,18 @@ function Library:Window(args)
 			UserInputService.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 then
 					if NumberBox.UpHover then
-						NumberBox:Add(args.Amount)
+						NumberBox:IncreaseValue()
 					end
 
 					if NumberBox.DownHover then
-						NumberBox:Minus(args.Amount)
+						NumberBox:DecreaseValue()
 					end
 				end
+			end)
+
+			Value.FocusLost:Connect(function()
+				NumberBox.Value = tonumber(Value.Text)
+				args.Callback(NumberBox.Value)
 			end)
 
 			return NumberBox
