@@ -241,6 +241,16 @@ function Library:Window(args)
 	local UiStrokeTemplatePlayerInfo = Instance.new("UIStroke")
 	local TabCover = Instance.new("ImageLabel")
 	local TabCoverUiCorner = Instance.new("UICorner")
+	local TemplateSlider = Instance.new("Frame")
+	local UIStrokeTemplateSlider = Instance.new("UIStroke")
+	local UICornerTemplateSlider = Instance.new("UICorner")
+	local TextLabelTemplateSlider = Instance.new("TextLabel")
+	local TemplateSliderBackFrame = Instance.new("Frame")
+	local UICorner = Instance.new("UICorner")
+	local TemplateSliderSliderFrame = Instance.new("Frame")
+	local UICorner_2 = Instance.new("UICorner")
+	local SliderValue = Instance.new("TextBox")
+	local UICorner_3 = Instance.new("UICorner")
 
 	MainFrame.Name = "MainFrame"
 	MainFrame.Parent = ScreenGui
@@ -641,6 +651,7 @@ function Library:Window(args)
 	CheckHolder.BackgroundColor3 = Color3.fromRGB(53, 53, 53)
 	CheckHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	CheckHolder.BorderSizePixel = 0
+	CheckHolder.AnchorPoint = Vector2.new(0.949999988, 0.5)
 	CheckHolder.Position = UDim2.new(0.813480496, 0, 0.200000003, 0)
 	CheckHolder.Size = UDim2.new(0, 20, 0, 20)
 
@@ -822,6 +833,76 @@ function Library:Window(args)
 	UICornerTemplateLabel.CornerRadius = UDim.new(0, 6)
 	UICornerTemplateLabel.Name = "UICornerTemplateLabel"
 	UICornerTemplateLabel.Parent = TemplateLabel
+
+	TemplateSlider.Name = "TemplateSlider"
+	TemplateSlider.Visible = false
+	TemplateSlider.Parent = TemplateTab
+	TemplateSlider.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	TemplateSlider.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplateSlider.BorderSizePixel = 0
+	TemplateSlider.Position = UDim2.new(0, 0, 0.326460481, 0)
+	TemplateSlider.Size = UDim2.new(0, 200, 0, 50)
+
+	UIStrokeTemplateSlider.Color = Color3.fromRGB(67, 67, 67)
+	UIStrokeTemplateSlider.Transparency = 1
+	UIStrokeTemplateSlider.Name = "UIStrokeTemplateSlider"
+	UIStrokeTemplateSlider.Parent = TemplateSlider
+
+	UICornerTemplateSlider.CornerRadius = UDim.new(0, 6)
+	UICornerTemplateSlider.Name = "UICornerTemplateSlider"
+	UICornerTemplateSlider.Parent = TemplateSlider
+
+	TextLabelTemplateSlider.Name = "TextLabelTemplateSlider"
+	TextLabelTemplateSlider.Parent = TemplateSlider
+	TextLabelTemplateSlider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabelTemplateSlider.BackgroundTransparency = 1.000
+	TextLabelTemplateSlider.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabelTemplateSlider.BorderSizePixel = 0
+	TextLabelTemplateSlider.Position = UDim2.new(0.0619493052, 0, 0.159999996, 0)
+	TextLabelTemplateSlider.Size = UDim2.new(0, 157, 0, 15)
+	TextLabelTemplateSlider.Font = Enum.Font.GothamMedium
+	TextLabelTemplateSlider.Text = "Slider"
+	TextLabelTemplateSlider.TextColor3 = Color3.fromRGB(200, 200, 200)
+	TextLabelTemplateSlider.TextSize = 16.000
+	TextLabelTemplateSlider.TextXAlignment = Enum.TextXAlignment.Left
+
+	TemplateSliderBackFrame.Name = "TemplateSliderBackFrame"
+	TemplateSliderBackFrame.Parent = TemplateSlider
+	TemplateSliderBackFrame.BackgroundColor3 = Color3.fromRGB(61, 61, 61)
+	TemplateSliderBackFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplateSliderBackFrame.BorderSizePixel = 0
+	TemplateSliderBackFrame.Position = UDim2.new(0.0508474745, 0, 0.5, 0)
+	TemplateSliderBackFrame.Size = UDim2.new(0, 146, 0, 15)
+
+	UICorner.CornerRadius = UDim.new(0, 4)
+	UICorner.Parent = TemplateSliderBackFrame
+
+	TemplateSliderSliderFrame.Name = "TemplateSliderSliderFrame"
+	TemplateSliderSliderFrame.Parent = TemplateSliderBackFrame
+	TemplateSliderSliderFrame.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+	TemplateSliderSliderFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplateSliderSliderFrame.BorderSizePixel = 0
+	TemplateSliderSliderFrame.Size = UDim2.new(0, 80, 0, 15)
+
+	UICorner_2.CornerRadius = UDim.new(0, 4)
+	UICorner_2.Parent = TemplateSliderSliderFrame
+
+	SliderValue.Name = "SliderValue"
+	SliderValue.Parent = TemplateSlider
+	SliderValue.BackgroundColor3 = Color3.fromRGB(53, 53, 53)
+	SliderValue.BackgroundTransparency = 1.000
+	SliderValue.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	SliderValue.BorderSizePixel = 0
+	SliderValue.Position = UDim2.new(0.813999951, 0, 0.5, 0)
+	SliderValue.Size = UDim2.new(0, 29, 0, 15)
+	SliderValue.Font = Enum.Font.GothamMedium
+	SliderValue.ShowNativeInput = false
+	SliderValue.Text = "100"
+	SliderValue.TextColor3 = Color3.fromRGB(200, 200, 200)
+	SliderValue.TextSize = 13.000
+
+	UICorner_3.CornerRadius = UDim.new(0, 4)
+	UICorner_3.Parent = SliderValue
 
 	TabCover.Name = "TabCover"
 	TabCover.Parent = TabHolder
@@ -1659,6 +1740,112 @@ function Library:Window(args)
 			end)
 
 			return Label
+		end
+
+		function Tab:Slider(args)
+			args = Library:Validate({
+				Text = "Slider",
+				Min = 0,
+				Max = 100,
+				Default = 50,
+				decimals = false,
+				Callback = function(v) print(v) end
+			}, args or {})
+
+			local Slider = {
+				Hover = false,
+				MouseDown = false,
+				Connection = nil
+			}
+
+			local RenderedSlider = TemplateSlider:Clone()
+			local Back = RenderedSlider.TemplateSliderBackFrame
+			local Fill = Back.TemplateSliderSliderFrame
+			local Text = RenderedSlider.TextLabelTemplateSlider
+			local ValueText = RenderedSlider.SliderValue
+
+			Text.Text = args.Text
+			ValueText.Text = args.Default
+			RenderedSlider.Parent = TabFrame.Holder
+			RenderedSlider.Visible = true
+
+			function Slider:SetValue(v)
+				if v == nil then
+					local percentage = math.clamp((Mouse.X - Back.AbsolutePosition.X) / (Back.AbsoluteSize.X), 0, 1)
+					local value = math.floor(((args.Max - args.Min) * percentage) + args.Min)
+					local value2 = ((args.Max - args.Min) * percentage) + args.Min
+
+					if args.decimals == false then
+						ValueText.Text = tostring(value)
+						TweenService:Create(Fill, TweenInfo.new(.1), {Size = UDim2.fromScale(percentage, 1)}):Play()
+					else
+						ValueText.Text = string.format("%.2f", value2)
+						TweenService:Create(Fill, TweenInfo.new(.1), {Size = UDim2.fromScale(percentage, 1)}):Play()
+					end
+				else
+					if args.decimals == false then
+						ValueText.Text = tostring(math.floor(v))
+						Library:tween(Fill, {Size = UDim2.fromScale(((v - args.Min) / (args.Max - args.Min)), 1)})
+					else
+						ValueText.Text = string.format("%.2f", v)
+						Library:tween(Fill, {Size = UDim2.fromScale((v - args.Min) / (args.Max - args.Min), 1)})
+					end
+				end
+				args.Callback(Slider:GetValue())
+			end
+
+			function Slider:GetValue()
+				return tonumber(ValueText.Text)
+			end
+
+			Slider:SetValue(args.Default)
+
+			Back.MouseEnter:Connect(function()
+				Slider.Hover = true
+
+				Library:tween(Fill, {BackgroundColor3 = Color3.fromRGB(85,85,85)})
+			end)
+
+			Back.MouseLeave:Connect(function()
+				Slider.Hover = false
+
+				if not Slider.MouseDown then
+					Library:tween(Fill, {BackgroundColor3 = Color3.fromRGB(75,75,75)})
+				end
+			end)
+
+			RenderedSlider.MouseEnter:Connect(function()
+				Library:tween(RenderedSlider.UIStrokeTemplateSlider, {Transparency = 0})
+				Library:tween(RenderedSlider, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
+			end)
+
+			RenderedSlider.MouseLeave:Connect(function()
+				Library:tween(RenderedSlider.UIStrokeTemplateSlider, {Transparency = 1})
+				Library:tween(RenderedSlider, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
+			end)
+
+			UserInputService.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 and Slider.Hover then
+					Slider.MouseDown = true
+
+					if not Slider.Connection then
+						Slider.Connection = RenderStepped(function()
+							Slider:SetValue()
+						end)
+					end
+				end
+			end)
+
+			UserInputService.InputEnded:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					Slider.MouseDown = false
+
+					if Slider.Connection then Slider.Connection:Disconnect() end
+					Slider.Connection = nil
+				end
+			end)
+
+			return Slider
 		end
 		
 		function Tab:Player(args)
