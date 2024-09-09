@@ -50,7 +50,7 @@ local Images = {
 	"rbxassetid://18703386053",
 }
 
-local function GetRandomImage()
+function Library:GetRandomImage()
 	return Images[math.random(1, #Images)]
 end
 
@@ -87,7 +87,7 @@ function Roblox_Notification(message, buttons, callback)
 	StarterGui:SetCore("SendNotification", {
 		Title = "Notification",
 		Text = message,
-		Icon = GetRandomImage(),
+		Icon = self:GetRandomImage(),
 		Button1 = buttons[1],
 		Button2 = buttons[2],
 		Callback = BindableFunction
@@ -246,6 +246,14 @@ function Library:Window(args)
 	local UICornerTemplateSlider = Instance.new("UICorner")
 	local TextLabelTemplateSlider = Instance.new("TextLabel")
 	local TemplateSliderBackFrame = Instance.new("Frame")
+	local TemplateNumberBox = Instance.new("Frame")
+	local UIStrokeTemplateNumberBox = Instance.new("UIStroke")
+	local TextLabelTemplateNumberBox = Instance.new("TextLabel")
+	local ValueBox = Instance.new("TextBox")
+	local UICornerValueBox = Instance.new("UICorner")
+	local Upbtn = Instance.new("ImageLabel")
+	local Downbtn = Instance.new("ImageLabel")
+	local UICornerTemplateNumberBox = Instance.new("UICorner")
 	local UICorner = Instance.new("UICorner")
 	local TemplateSliderSliderFrame = Instance.new("Frame")
 	local UICorner_2 = Instance.new("UICorner")
@@ -902,6 +910,76 @@ function Library:Window(args)
 
 	UICorner_3.CornerRadius = UDim.new(0, 4)
 	UICorner_3.Parent = SliderValue
+
+	TemplateNumberBox.Name = "TemplateNumberBox"
+	TemplateNumberBox.Parent = TemplateTab
+	TemplateNumberBox.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	TemplateNumberBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplateNumberBox.BorderSizePixel = 0
+	TemplateNumberBox.Position = UDim2.new(0, 0, 0.611683846, 0)
+	TemplateNumberBox.Size = UDim2.new(0, 225, 0, 33)
+
+	UIStrokeTemplateNumberBox.Color = Color3.fromRGB(67, 67, 67)
+	UIStrokeTemplateNumberBox.Transparency = 1
+	UIStrokeTemplateNumberBox.Name = "UIStrokeTemplateNumberBox"
+	UIStrokeTemplateNumberBox.Parent = TemplateNumberBox
+
+	TextLabelTemplateNumberBox.Name = "TextLabelTemplateNumberBox"
+	TextLabelTemplateNumberBox.Parent = TemplateNumberBox
+	TextLabelTemplateNumberBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabelTemplateNumberBox.BackgroundTransparency = 1.000
+	TextLabelTemplateNumberBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabelTemplateNumberBox.BorderSizePixel = 0
+	TextLabelTemplateNumberBox.Size = UDim2.new(1, 0, 1, 0)
+	TextLabelTemplateNumberBox.Font = Enum.Font.GothamMedium
+	TextLabelTemplateNumberBox.Text = "  Number box"
+	TextLabelTemplateNumberBox.TextColor3 = Color3.fromRGB(200, 200, 200)
+	TextLabelTemplateNumberBox.TextSize = 16.000
+	TextLabelTemplateNumberBox.TextWrapped = true
+	TextLabelTemplateNumberBox.TextXAlignment = Enum.TextXAlignment.Left
+
+	ValueBox.Name = "ValueBox"
+	ValueBox.Parent = TemplateNumberBox
+	ValueBox.BackgroundColor3 = Color3.fromRGB(53, 53, 53)
+	ValueBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ValueBox.BorderSizePixel = 0
+	ValueBox.Position = UDim2.new(0.786666691, 0, 0.105303213, 0)
+	ValueBox.Size = UDim2.new(0, 25, 0, 25)
+	ValueBox.Font = Enum.Font.GothamMedium
+	ValueBox.Text = "50"
+	ValueBox.TextColor3 = Color3.fromRGB(200, 200, 200)
+	ValueBox.TextSize = 14.000
+
+	UICornerValueBox.CornerRadius = UDim.new(0, 6)
+	UICornerValueBox.Name = "UICornerValueBox"
+	UICornerValueBox.Parent = ValueBox
+
+	Upbtn.Name = "Upbtn"
+	Upbtn.Parent = ValueBox
+	Upbtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Upbtn.BackgroundTransparency = 1.000
+	Upbtn.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Upbtn.BorderSizePixel = 0
+	Upbtn.Position = UDim2.new(-0.826666236, 0, 0.100000001, 0)
+	Upbtn.Size = UDim2.new(0, 20, 0, 20)
+	Upbtn.Image = "rbxassetid://13846892708"
+	Upbtn.ImageColor3 = Color3.fromRGB(200, 200, 200)
+
+	Downbtn.Name = "Downbtn"
+	Downbtn.Parent = ValueBox
+	Downbtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Downbtn.BackgroundTransparency = 1.000
+	Downbtn.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Downbtn.BorderSizePixel = 0
+	Downbtn.Position = UDim2.new(0.993667006, 0, 0.100000001, 0)
+	Downbtn.Rotation = 180.000
+	Downbtn.Size = UDim2.new(0, 20, 0, 20)
+	Downbtn.Image = "rbxassetid://13846892708"
+	Downbtn.ImageColor3 = Color3.fromRGB(200, 200, 200)
+
+	UICornerTemplateNumberBox.CornerRadius = UDim.new(0, 6)
+	UICornerTemplateNumberBox.Name = "UICornerTemplateNumberBox"
+	UICornerTemplateNumberBox.Parent = TemplateNumberBox
 
 	TabCover.Name = "TabCover"
 	TabCover.Parent = TabHolder
@@ -1749,7 +1827,7 @@ function Library:Window(args)
 				Default = 50,
 				decimals = false,
 				ToolTip = nil,
-				Callback = function(v) print(v) end
+				Callback = function(v) end
 			}, args or {})
 
 			local Slider = {
@@ -1884,6 +1962,90 @@ function Library:Window(args)
 			end)
 
 			return Slider
+		end
+
+		function Tab:NumberBox(args)
+			args = Library:Validate({
+				Text = "Number Box",
+				Min = 0,
+				Max = 50,
+				Default = 1,
+				Amount = 1,
+				Callback = function(v)
+					print(v)
+				end
+			}, args or {})		
+			
+			local RenderedNumberBox = TemplateNumberBox:Clone()
+			local Value = RenderedNumberBox.ValueBox
+			local Up = Value.Upbtn
+			local Down = Value.Downbtn
+
+			local NumberBox = {
+				UpHover = false,
+				DownHover = false,
+				Value = args.Default
+			}
+
+			Value.Text = tostring(NumberBox.Value)
+
+			function NumberBox:Add(v)
+				NumberBox.Value = NumberBox.Value + v
+				Value.Text = tostring(NumberBox.Value)
+
+				args.Callback(args.Value)
+			end
+
+			function NumberBox:Minus(v)
+				NumberBox.Value = NumberBox.Value - v
+				Value.Text = tostring(NumberBox.Value)
+
+				args.Callback(args.Value)
+			end
+
+			RenderedNumberBox.MouseEnter:Connect(function()
+				Library:tween(RenderedNumberBox.UIStrokeTemplateSlider, {Transparency = 0})
+				Library:tween(RenderedNumberBox, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
+			end)
+
+			RenderedNumberBox.MouseLeave:Connect(function()
+				Library:tween(RenderedNumberBox.UIStrokeTemplateSlider, {Transparency = 1})
+				Library:tween(RenderedNumberBox, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
+			end)
+
+			Up.MouseEnter:Connect(function()
+				NumberBox.UpHover = true
+				Library:tween(Up, {ImageColor3 = Color3.fromRGB(255,255,255)})
+			end)
+
+			Up.MouseLeave:Connect(function()
+				NumberBox.UpHover = false
+				Library:tween(Up, {ImageColor3 = Color3.fromRGB(200,200,200)})
+			end)
+
+			Down.MouseEnter:Connect(function()
+				NumberBox.DownHover = true
+				Library:tween(Down, {ImageColor3 = Color3.fromRGB(255,255,255)})
+			end)
+
+			Down.MouseLeave:Connect(function()
+				NumberBox.DownHover = false
+				Library:tween(Down, {ImageColor3 = Color3.fromRGB(200,200,200)})
+			end)
+
+			UserInputService.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					if NumberBox.UpHover then
+						NumberBox:Add(args.Amount)
+					end
+
+					if NumberBox.DownHover then
+						NumberBox:Minus(args.Amount)
+					end
+				end
+			end)
+
+			return NumberBox
 		end
 		
 		function Tab:Player(args)
