@@ -116,6 +116,8 @@ function Library:Window(args)
 		OnClose = function() end
 	}, args or {})
 
+	local Minimized = false
+
 	local This = {
 		CurrentTab = nil,
 		CurrentTabName = nil,
@@ -139,6 +141,21 @@ function Library:Window(args)
 			end
 		end)
 	end
+
+	-- FOR THER LOVE OF GOD MAKE A TWEEN 
+
+	Roblox_Notification("Insert to toggle gui(Tween Soon)", {"Okay!"})
+
+	UserInputService.InputBegan:Connect(function(input)
+		if input.KeyCode == Enum.KeyCode.Insert then
+			if Minimized then
+				ScreenGui.Enabled = true
+			else
+				ScreenGui.Enabled = false
+			end
+			Minimized = not Minimized
+		end
+	end)
 
 	printColor("Gulp uhhh chat module soon :fire: !!!!", Color3.fromRGB(98, 0, 255))
 
@@ -1770,19 +1787,6 @@ task.defer(function()
 				loadstring(game:HttpGet(self.url.."Example.lua"))()
 			end
 		end)
-	else
-		printColor("Making players tgab ok!", Color3.fromRGB(125, 170, 255))
-		--local _Players = Library._Window:Tab({Text = "Players"})
-
-		for i,v in pairs(self._Window) do
-			warn(i, v)
-		end
-
-		for _,v in pairs(Players:GetPlayers()) do
-			if v ~= Players.LocalPlayer then
-				--_Players:Player({Player = v})
-			end
-		end
 	end
 end)
 
