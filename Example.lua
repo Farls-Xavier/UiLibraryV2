@@ -7,6 +7,7 @@ local Tab = Window:Tab()
 
 local Button = Tab:Button({Text = "A Button", ToolTip = "Press me"})
 local Toggle = Tab:Toggle({Text = "A Toggle", ToolTip = "Toggle me"})
+local Slider = Tab:Slider()
 local Image = Tab:ImageLabel({Image = "rbxassetid://133772874267731", ToolTip = "View me"})
 local Bind = Tab:Keybind({Text = "A Bind", ToolTip = "Press my key"})
 local Label = Tab:Label({Text = "A Label with tooltip", ToolTip = "Read me"})
