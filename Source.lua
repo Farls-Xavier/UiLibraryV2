@@ -70,7 +70,7 @@ function Library:Validate(defaults, args)
 	return args
 end
 
-function Roblox_Notification(message, buttons, callback)
+local function Roblox_Notification(message, buttons, callback)
 	buttons = buttons or {"Yes", "No"}
 	callback = callback or function(answer)
 		warn("Callback is set to nil")
@@ -623,7 +623,7 @@ function Library:Window(args)
 	TemplateToggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	TemplateToggle.BorderSizePixel = 0
 	TemplateToggle.Position = UDim2.new(0.0291828793, 0, 0.35395357, 0)
-	TemplateToggle.Size = UDim2.new(0, 154, 0, 35)
+	TemplateToggle.Size = UDim2.new(0, 176, 0, 35)
 	TemplateToggle.Visible = false
 
 	TextLabelTemplateToggle.Name = "TextLabelTemplateToggle"
@@ -633,7 +633,7 @@ function Library:Window(args)
 	TextLabelTemplateToggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	TextLabelTemplateToggle.BorderSizePixel = 0
 	TextLabelTemplateToggle.Position = UDim2.new(0, 0, 0.285714298, 0)
-	TextLabelTemplateToggle.Size = UDim2.new(0, 108, 0, 15)
+	TextLabelTemplateToggle.Size = UDim2.new(0, 123, 0, 15)
 	TextLabelTemplateToggle.Font = Enum.Font.GothamMedium
 	TextLabelTemplateToggle.Text = "  Toggle"
 	TextLabelTemplateToggle.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -656,11 +656,16 @@ function Library:Window(args)
 
 	CheckHolder.Name = "CheckHolder"
 	CheckHolder.Parent = TemplateToggle
+	CheckHolder.AnchorPoint = Vector2.new(0.949999988, 0.5)
 	CheckHolder.BackgroundColor3 = Color3.fromRGB(53, 53, 53)
 	CheckHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	CheckHolder.BorderSizePixel = 0
-	CheckHolder.Position = UDim2.new(0.813480496, 0, 0.200000003, 0)
+	CheckHolder.Position = UDim2.new(0.952367604, 0, 0.5, 0)
 	CheckHolder.Size = UDim2.new(0, 20, 0, 20)
+
+	UICornerCheckHolder.CornerRadius = UDim.new(0, 5)
+	UICornerCheckHolder.Name = "UICornerCheckHolder"
+	UICornerCheckHolder.Parent = CheckHolder
 
 	CheckmarkImage.Name = "CheckmarkImage"
 	CheckmarkImage.Parent = CheckHolder
@@ -834,7 +839,7 @@ function Library:Window(args)
 	TextLabelTemplateLabel.Text = "  Label"
 	TextLabelTemplateLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 	TextLabelTemplateLabel.TextSize = 16.000
-	TextLabelTemplateLabel.TextWrapped = true
+	TextLabelTemplateLabel.TextWrapped = false
 	TextLabelTemplateLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 	UICornerTemplateLabel.CornerRadius = UDim.new(0, 6)
@@ -1787,7 +1792,7 @@ function Library:Window(args)
 			end
 
 			Label:SetText(args.Text)
-			
+
 			RenderedLabel.MouseEnter:Connect(function()
 				Label.Hover = true
 				
@@ -2049,6 +2054,12 @@ function Library:Window(args)
 			end)
 
 			Value.FocusLost:Connect(function()
+				if Value.Text:len() == 0 then
+					NumberBox.Value = tonumber(args.Default)
+					args.Callback(NumberBox.Value)
+					return
+				end
+
 				NumberBox.Value = tonumber(Value.Text)
 				args.Callback(NumberBox.Value)
 			end)
