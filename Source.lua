@@ -1775,6 +1775,7 @@ function Library:Window(args)
 
 			function Label:SetText(s)
 				Text.Text = " "..tostring(s)	
+				Library:tween(RenderedLabel, {Size = UDim2.fromOffset(Text.TextBounds.X + 2, 25)})
 			end
 
 			function Label:TypeWrite(s)
@@ -1782,11 +1783,11 @@ function Library:Window(args)
 					Text.Text = string.sub(" "..s, 1, i)
 					task.wait(0.05)
 				end
+				Library:tween(RenderedLabel, {Size = UDim2.fromOffset(Text.TextBounds.X + 2, 25)})
 			end
 
 			Label:SetText(args.Text)
-			RenderedLabel.Size = UDim2.fromOffset(Text.TextBounds.X + 2, 25)
-
+			
 			RenderedLabel.MouseEnter:Connect(function()
 				Label.Hover = true
 				
