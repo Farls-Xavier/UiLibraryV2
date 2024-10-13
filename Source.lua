@@ -1,4 +1,4 @@
-local Library = {url = "https://raw.githubusercontent.com/Farls-Xavier/UiLibraryV2/main/", path = "@Farleyy"} -- Is NOT temporary
+local Library = {url = "https://raw.githubusercontent.com/Farls-Xavier/UiLibraryV2/main/", path = "@Farleyy", window = nil, currentState = nil} -- Is NOT temporary
 
 Library.__index = Library
 
@@ -11,9 +11,9 @@ function Library:strip(str)
 end
 
 if isfolder("@Farleyy") then
-	printColor("Root folder exists.", Color3.fromRGB(245, 238, 140))
+	warn("Root folder exists.")
 else
-	printColor("Root folder does not exist.", Color3.fromRGB(200,0,0))
+	warn("Root folder does not exist.")
 	makefolder("@Farleyy")
 end
 
@@ -32,8 +32,7 @@ local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local HttpService = game:GetService("HttpService")
 local Config = HttpService:JSONDecode(readfile(self.path.."\\Config.json"))
-local UiTools = loadstring(game:HttpGet(Library.url.."UiTools.lua"))()
---local Player = Players.LocalPlayer
+local UiTools = loadstring(game:HttpGet(self.url.."UiTools.lua"))()
 local Mouse = Players.LocalPlayer:GetMouse()
 
 for i,v in pairs(game.CoreGui:GetDescendants()) do
@@ -104,10 +103,10 @@ function Library:GetVersion()
 	return game:HttpGet(Library.url.."version.txt")
 end
 
-Library._Window = nil
-
 local LoadedVersion = Library:GetVersion()
 local NotifiedVersion = false
+
+self.currentState = "loading"
 
 function Library:Window(args)
 	args = Library:Validate({
@@ -157,15 +156,15 @@ function Library:Window(args)
 		end
 	end)
 
-	printColor("Gulp uhhh chat module soon :fire: !!!!", Color3.fromRGB(98, 0, 255))
+	warn("NO CHATM ODULE")
 
-	Library._Window = This
+	Library.window = This
 
 	coroutine.wrap(function()
 		while task.wait(.5) do
 			if LoadedVersion ~= Library:GetVersion() and NotifiedVersion ~= true then
 				NotifiedVersion = true
-				printColor("Ui library has updated from version: "..LoadedVersion.." to: "..Library:GetVersion(), Color3.fromRGB(97, 85, 165))
+				warn("Ui library has updated from version: "..LoadedVersion.." to: "..Library:GetVersion())
 			end
 		end	
 	end)()
@@ -296,14 +295,14 @@ function Library:Window(args)
 
 	Navigation.Name = "Navigation"
 	Navigation.Parent = MainFrame
-	Navigation.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Navigation.BackgroundTransparency = 1.000
+	Navigation.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+	Navigation.BackgroundTransparency = 0
 	Navigation.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Navigation.BorderSizePixel = 0
 	Navigation.Size = UDim2.new(0, 0, 0, 330) -- UDim2.new(0, 150, 0, 330)
 	Navigation.Visible = true
 	Navigation.ZIndex = 2
-	Navigation.Image = "rbxassetid://1633616921"
+	Navigation.Image = "" --"rbxassetid://1633616921"
 	Navigation.ImageColor3 = Color3.fromRGB(26, 26, 26)
 
 	UICornerNavigation.CornerRadius = UDim.new(0, 4)
@@ -400,6 +399,7 @@ function Library:Window(args)
 	TextTabButton.Text = "Home"
 	TextTabButton.TextColor3 = Color3.fromRGB(200, 200, 200)
 	TextTabButton.TextSize = 15.000
+	TextTabButton.TextXAlignment = Enum.TextXAlignment.Left
 
 	UICornerTabBtnTemplate.CornerRadius = UDim.new(0, 2)
 	UICornerTabBtnTemplate.Name = "UICornerTabBtnTemplate"
@@ -411,7 +411,7 @@ function Library:Window(args)
 	Version.BackgroundTransparency = 1.000
 	Version.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Version.BorderSizePixel = 0
-	Version.Position = UDim2.new(0.576666653, 0, 0.963636339, 0)
+	Version.Position = UDim2.new(0.786666653, 0, 0.963636339, 0)
 	Version.Size = UDim2.new(0, 29, 0, 12)
 	Version.Font = Enum.Font.GothamBold
 	Version.Text = "v "..Library:GetVersion()
@@ -1050,6 +1050,104 @@ function Library:Window(args)
 		ToolTipText.TextColor3 = Color3.fromRGB(0,0,0)
 		ToolTip.BackgroundColor3 = Color3.fromRGB(255,255,255)
 	end
+
+	-- DO LOAD RIGHT HER
+
+	local Loading = Instance.new("Frame")
+	local UICornerLoading = Instance.new("UICorner")
+	local BackProgressBar = Instance.new("Frame")
+	local UICornerProgressBar = Instance.new("UICorner")
+	local Fill = Instance.new("Frame")
+	local UICornerFill = Instance.new("UICorner")
+	local LoadingMessage = Instance.new("TextLabel")
+	local LoadingImage = Instance.new("ImageLabel")
+
+	Loading.Name = "Loading"
+	Loading.Parent = MainFrame
+	Loading.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Loading.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Loading.BorderSizePixel = 0
+	Loading.Size = UDim2.new(1, 0, 1, 0)
+
+	UICornerLoading.CornerRadius = UDim.new(0, 6)
+	UICornerLoading.Name = "UICornerLoading"
+	UICornerLoading.Parent = Loading
+
+	BackProgressBar.Name = "BackProgressBar"
+	BackProgressBar.Parent = Loading
+	BackProgressBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	BackProgressBar.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	BackProgressBar.BorderSizePixel = 0
+	BackProgressBar.Position = UDim2.new(0.298516452, 0, 0.622286737, 0)
+	BackProgressBar.Size = UDim2.new(0, 215, 0, 15)
+
+	UICornerProgressBar.CornerRadius = UDim.new(0, 4)
+	UICornerProgressBar.Name = "UICornerProgressBar"
+	UICornerProgressBar.Parent = BackProgressBar
+
+	Fill.Name = "Fill"
+	Fill.Parent = BackProgressBar
+	Fill.BackgroundColor3 = Color3.fromRGB(58, 58, 58)
+	Fill.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Fill.BorderSizePixel = 0
+	Fill.Size = UDim2.new(0, 0, 1, 0)
+
+	UICornerFill.CornerRadius = UDim.new(0, 4)
+	UICornerFill.Name = "UICornerFill"
+	UICornerFill.Parent = Fill
+
+	LoadingMessage.Name = "LoadingMessage"
+	LoadingMessage.Parent = BackProgressBar
+	LoadingMessage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	LoadingMessage.BackgroundTransparency = 1.000
+	LoadingMessage.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	LoadingMessage.BorderSizePixel = 0
+	LoadingMessage.Position = UDim2.new(0.228348136, 0, -1.67052615, 0)
+	LoadingMessage.Size = UDim2.new(0, 129, 0, 23)
+	LoadingMessage.Font = Enum.Font.GothamMedium
+	LoadingMessage.Text = "Loading Modules"
+	LoadingMessage.TextColor3 = Color3.fromRGB(200, 200, 200)
+	LoadingMessage.TextSize = 15.000
+
+	LoadingImage.Name = "LoadingImage"
+	LoadingImage.Parent = Loading
+	LoadingImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	LoadingImage.BackgroundTransparency = 1.000
+	LoadingImage.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	LoadingImage.BorderSizePixel = 0
+	LoadingImage.Position = UDim2.new(0.322100431, 0, 0.217398539, 0)
+	LoadingImage.Size = UDim2.new(0, 190, 0, 104)
+	LoadingImage.Image = Library:GetRandomImage()
+
+	local function SetProgress(n)
+		if n > 100 then
+			n = 100 / 100
+		else
+			n = n / 100
+		end
+		TweenService:Create(Fill, TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(n, 0, 1, 0)}):Play()
+	end
+
+	task.delay(.1, function()
+		Library:tween(Loading, {BackgroundColor3 = Color3.fromRGB(30,30,30)})
+	end)
+	
+	-- WIll make it actually laod soon
+
+	SetProgress(28)
+	
+	LoadingMessage.Text = "Ok module done"
+	
+	task.delay(.4, function()
+		SetProgress(72)
+		LoadingMessage.Text = "Ok load done"
+	end)
+	
+	task.delay(3, function()
+		self.currentState = "loaded"
+	end)
+
+	repeat task.wait() until self.currentState == "loaded" or Config.LoadingScreen == false
 
 	local NavOpen = true
 	local NavAction = false
@@ -2186,10 +2284,10 @@ function Library:Window(args)
 end
 
 task.defer(function()
-	if self._Window == nil then
+	if self.window == nil then
 		Roblox_Notification("Would you like to load an example?", {"Yes", "No"}, function(answer)		
 			if answer == "Yes" then
-				printColor("Loading example.", Color3.fromRGB(35,35,35))
+				warn("Loading example.")
 				loadstring(game:HttpGet(self.url.."Example.lua"))()
 			end
 		end)
