@@ -99,6 +99,13 @@ function Library:tween(object, goal, callback)
 	tween:Play()
 end
 
+function Library:AbbreviateNumber(n)
+	local suffixes = {"", "K", "M", "B", "T", "QA", "QI", "SX", "SP", "OC", "NO", "DC", "UD", "DD", "TD", "QAD", "QID", "SXD", "SPD", "OCD", "NOD", "VG", "UVG"}
+	local TS = tostring(math.floor(n))
+
+	return string.sub(TS, 1, ((#TS - 1) % 3) + 1) .. (suffixes)[math.floor((#TS - 1) / 3) + 1]
+end
+
 function Library:GetVersion()
 	return game:HttpGet(Library.url.."version.txt")
 end
@@ -1139,7 +1146,7 @@ function Library:Window(args)
 	LoadingMessage.Text = "Ok module done"
 	
 	task.delay(.4, function()
-		SetProgress(72)
+		SetProgress(100)
 		LoadingMessage.Text = "Ok load done"
 	end)
 	
@@ -1148,6 +1155,12 @@ function Library:Window(args)
 	end)
 
 	repeat task.wait() until self.currentState == "loaded" or Config.LoadingScreen == false
+
+	Library:tween(Loading, {BackgroundTransparency = 1})
+	Library:tween(BackProgressBar, {BackgroundTransparency = 1})
+	Library:tween(Fill, {BackgroundTransparency = 1})
+	Library:tween(LoadingMessage, {TextTransparency = 1})
+	Library:tween(LoadingImage, {ImageTransparency = 1})
 
 	local NavOpen = true
 	local NavAction = false
@@ -2095,17 +2108,17 @@ function Library:Window(args)
 				Value = args.Default
 			}
 
-			Value.Text = tostring(NumberBox.Value)
+			Value.Text = Library:AbbreviateNumber(NumberBox.Value)
 
 			function NumberBox:IncreaseValue()
 				NumberBox.Value += args.Amount
-				Value.Text = tostring(NumberBox.Value)
+				Value.Text = Library:AbbreviateNumber(NumberBox.Value)
 				args.Callback(NumberBox.Value)
 			end
 			
 			function NumberBox:DecreaseValue()
 				NumberBox.Value -= args.Amount
-				Value.Text = tostring(NumberBox.Value)
+				Value.Text = Library:AbbreviateNumber(NumberBox.Value)
 				args.Callback(NumberBox.Value)
 			end
 
@@ -2159,6 +2172,7 @@ function Library:Window(args)
 				end
 
 				NumberBox.Value = tonumber(Value.Text)
+				Value.Text = Library:AbbreviateNumber(NumberBox.Value)
 				args.Callback(NumberBox.Value)
 			end)
 
