@@ -1151,10 +1151,10 @@ function Library:Window(args)
 	end)
 	
 	task.delay(3, function()
-		self.currentState = "loaded"
+		Library.currentState = "loaded"
 	end)
 
-	repeat task.wait() until self.currentState == "loaded" or Config.LoadingScreen == false
+	repeat task.wait() until Library.currentState == "loaded" or Config.LoadingScreen == false
 
 	Library:tween(Loading, {BackgroundTransparency = 1})
 	Library:tween(BackProgressBar, {BackgroundTransparency = 1})
@@ -1448,6 +1448,8 @@ function Library:Window(args)
 
 			local ButtonText = RenderedButton.TextLabelTemplateButton
 			ButtonText.Text = "  "..args.Text
+
+			RenderedButton.Size = UDim2.fromOffset(ButtonText.TextBounds.X + 6, 35)
 
 			RenderedButton.ButtonImage.Image = args.Icon
 
@@ -2177,6 +2179,20 @@ function Library:Window(args)
 			end)
 
 			return NumberBox
+		end
+
+		function Tab:Dropdown(args)
+			args = Library:Validate({
+				Text = "Dropdown",
+				Callback = function(v) end,
+				Items = {}
+			}, args or {})
+
+			local Dropdown = {
+				
+			}
+
+			return Dropdown
 		end
 		
 		function Tab:Player(args)
