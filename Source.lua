@@ -2319,6 +2319,10 @@ function Library:Window(args)
 					HealthSet:Disconnect()
 					PlayerInfo = nil
 					RenderedPlayer:Destroy()
+
+					if This.TargetPlayer == player then
+						This.TargetPlayer = nil
+					end
 				end
 			end)
 			
