@@ -1611,6 +1611,11 @@ function Library:Window(args)
 
 			UserInputService.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 and Toggle.Hover then
+					if Minimized then
+						Toggle.Hover = false
+						return
+					end
+					
 					Toggle.MouseDown = true
 					Toggle:Toggle()
 				end
@@ -1618,6 +1623,11 @@ function Library:Window(args)
 
 			UserInputService.InputEnded:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 and Toggle.MouseDown then
+					if Minimized then
+						Toggle.Hover = false
+						return
+					end
+
 					Toggle.MouseDown = false
 
 					Library:tween(RenderedToggle, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
@@ -2302,6 +2312,14 @@ function Library:Window(args)
 				
 				RenderedPlayer.TextLabelTemplatePlayerInfoPing.Text = Health.."%"
 				RenderedPlayer.HealthImage.ImageColor3 = color
+			end)
+
+			Players.PlayerRemoving:Connect(function(player)
+				if player == args.Player then
+					HealthSet:Disconnect()
+					PlayerInfo = nil
+					RenderedPlayer:Destroy()
+				end
 			end)
 			
 			return PlayerInfo
