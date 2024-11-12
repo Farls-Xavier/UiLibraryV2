@@ -69,7 +69,7 @@ function Library:Validate(defaults, args)
 	return args
 end
 
-local function Roblox_Notification(message, buttons, callback)
+function Library:Roblox_Notification(message, buttons, callback)
 	buttons = buttons or {"Yes", "No"}
 	callback = callback or function(answer)
 		warn("Callback is set to nil")
@@ -141,7 +141,7 @@ function Library:Window(args)
 	RefrenceValue.Value = "Reference Value"
 
 	if Config.Chat == true then
-		Roblox_Notification("Do you actually wanna use this trash chat?", {"Yes", "No"}, function(answer)
+		Library:Roblox_Notification("Do you actually wanna use this trash chat?", {"Yes", "No"}, function(answer)
 			if answer == "Yes" then
 				loadstring(game:HttpGet(Library.url.."ChatModule.lua"))()
 			end
@@ -150,7 +150,7 @@ function Library:Window(args)
 
 	-- FOR THER LOVE OF GOD MAKE A TWEEN 
 
-	Roblox_Notification("Insert to toggle gui(Tween Soon)", {"Okay!"})
+	Library:Roblox_Notification("Insert to toggle gui(Tween Soon)", {"Okay!"})
 
 	UserInputService.InputBegan:Connect(function(input)
 		if input.KeyCode == Enum.KeyCode.Insert then
@@ -2337,7 +2337,7 @@ end
 
 task.defer(function()
 	if self.window == nil then
-		Roblox_Notification("Would you like to load an example?", {"Yes", "No"}, function(answer)		
+		Library:Roblox_Notification("Would you like to load an example?", {"Yes", "No"}, function(answer)		
 			if answer == "Yes" then
 				warn("Loading example.")
 				loadstring(game:HttpGet(self.url.."Example.lua"))()
