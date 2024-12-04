@@ -1,6 +1,6 @@
 local module = {}
 
-function module.MakeDraggable(topbarobject, object, smoothFactor)
+function module.MakeDraggable(topbarobject, object, smoothFactor, mousebutton2)
 	local Dragging = nil
 	local DragInput = nil
 	local DragStart = nil
@@ -22,7 +22,7 @@ function module.MakeDraggable(topbarobject, object, smoothFactor)
 
 	topbarobject.InputBegan:Connect(
 		function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch or mousebutton2 and input.UserInputType == Enum.UserInputType.MouseButton2 then
 				Dragging = true
 				DragStart = input.Position
 				StartPosition = object.Position
