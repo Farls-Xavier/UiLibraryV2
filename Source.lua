@@ -640,7 +640,7 @@ function Library:Window(args)
 	TextLabelTemplateToggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	TextLabelTemplateToggle.BorderSizePixel = 0
 	TextLabelTemplateToggle.Position = UDim2.new(0, 0, 0.285714298, 0)
-	TextLabelTemplateToggle.Size = UDim2.new(0, 123, 0, 15)
+	TextLabelTemplateToggle.Size = UDim2.new(0, 125, 0, 15)
 	TextLabelTemplateToggle.Font = Enum.Font.GothamMedium
 	TextLabelTemplateToggle.Text = "  Toggle"
 	TextLabelTemplateToggle.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -1126,9 +1126,10 @@ function Library:Window(args)
 	LoadingImage.Size = UDim2.new(0, 190, 0, 104)
 	LoadingImage.Image = Library:GetRandomImage()
 
+--[[
 	local function SetProgress(n)
 		if n > 100 then
-			n = 100 / 100
+			n = 100
 		else
 			n = n / 100
 		end
@@ -1155,112 +1156,220 @@ function Library:Window(args)
 	end)
 
 	repeat task.wait() until Library.currentState == "loaded" or Config.LoadingScreen == false
+]]
 
-	Library:tween(Loading, {BackgroundTransparency = 1})
-	Library:tween(BackProgressBar, {BackgroundTransparency = 1})
-	Library:tween(Fill, {BackgroundTransparency = 1})
-	Library:tween(LoadingMessage, {TextTransparency = 1})
-	Library:tween(LoadingImage, {ImageTransparency = 1})
+Library:tween(Loading, {BackgroundTransparency = 1})
+Library:tween(BackProgressBar, {BackgroundTransparency = 1})
+Library:tween(Fill, {BackgroundTransparency = 1})
+Library:tween(LoadingMessage, {TextTransparency = 1})
+Library:tween(LoadingImage, {ImageTransparency = 1})
 
-	local NavOpen = true
-	local NavAction = false
-	local NavToggleHover = false
+local NavOpen = true
+local NavAction = false
+local NavToggleHover = false
 
-	local NavTweenOpen = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 150, 0, 330)})
-	local NavTogglebtnOpen = TweenService:Create(NavigationToggle, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Position = UDim2.new(0.279750705, 0, 0.00606060587, 0)})
+local NavTweenOpen = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 150, 0, 330)})
+local NavTogglebtnOpen = TweenService:Create(NavigationToggle, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Position = UDim2.new(0.279750705, 0, 0.00606060587, 0)})
 
-	local NavTweenClose = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 0, 0, 330)})
-	local NavTogglebtnClose = TweenService:Create(NavigationToggle, TweenInfo.new(.44, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Position = UDim2.new(-0.001, 0, 0.009, 0)})
+local NavTweenClose = TweenService:Create(Navigation, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 0, 0, 330)})
+local NavTogglebtnClose = TweenService:Create(NavigationToggle, TweenInfo.new(.44, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Position = UDim2.new(-0.001, 0, 0.009, 0)})
 
-	NavTweenOpen:Play()
-	NavTogglebtnOpen:Play()
-	Library:tween(TabCover, {BackgroundTransparency = .05})
+NavTweenOpen:Play()
+NavTogglebtnOpen:Play()
+Library:tween(TabCover, {BackgroundTransparency = .05})
 
-	Library:tween(NavigationToggle, {Rotation = 90})
+Library:tween(NavigationToggle, {Rotation = 90})
 
-	NavTweenOpen.Completed:Connect(function()
-		Library:tween(Version, {TextTransparency = 0})
-	end)
+NavTweenOpen.Completed:Connect(function()
+	Library:tween(Version, {TextTransparency = 0})
+end)
 
-	local function CloseNavigation()
-		Library:tween(Version, {TextTransparency = 1})
+--[[local function CloseNavigation()
+	Library:tween(Version, {TextTransparency = 1})
 
-		NavAction = true
+	NavAction = true
 
-		for i,v in pairs(Layout:GetChildren()) do
-			if not string.find(v.Name:lower(), "template") then
-				if v:IsA("TextButton") then
-					Library:tween(v, {BackgroundTransparency = 1})
-					for _,vv in pairs(v:GetChildren()) do
-						if vv:IsA("UIStroke") then
-							Library:tween(vv, {Transparency = 1})
-						elseif vv:IsA("TextButton") then
-							Library:tween(vv, {BackgroundTransparency = 1})
-							Library:tween(vv, {TextTransparency = 1})
-						elseif vv:IsA("ImageLabel") then
-							Library:tween(vv, {ImageTransparency = 1}, function()
-								NavTweenClose:Play()
-								NavTogglebtnClose:Play()
+	for i,v in pairs(Layout:GetChildren()) do
+		if not string.find(v.Name:lower(), "template") then
+			if v:IsA("TextButton") then
+				Library:tween(v, {BackgroundTransparency = 1})
+				for _,vv in pairs(v:GetChildren()) do
+					if vv:IsA("UIStroke") then
+						Library:tween(vv, {Transparency = 1})
+					elseif vv:IsA("TextButton") then
+						Library:tween(vv, {BackgroundTransparency = 1})
+						Library:tween(vv, {TextTransparency = 1})
+					elseif vv:IsA("ImageLabel") then
+						Library:tween(vv, {ImageTransparency = 1}, function()
+							NavTweenClose:Play()
+							NavTogglebtnClose:Play()
 
-								Library:tween(TabCover, {BackgroundTransparency = 1})
+							Library:tween(TabCover, {BackgroundTransparency = 1})
 
-								DragBar.Position = UDim2.new(0.0436863415, 0, 0, 0)
-								DragBar.Size = UDim2.new(0, 510, 0, 29)
+							DragBar.Position = UDim2.new(0.0436863415, 0, 0, 0)
+							DragBar.Size = UDim2.new(0, 510, 0, 29)
 
-								task.delay(.1, function()
-									Library:tween(NavigationToggle, {Rotation = -90})
-								end)
-								NavTweenClose.Completed:Connect(function()
-									Navigation.Visible = false
-									NavAction = false
-								end)
+							task.delay(.1, function()
+								Library:tween(NavigationToggle, {Rotation = -90})
 							end)
-						end
+
+							NavTweenClose.Completed:Connect(function()
+								Navigation.Visible = false
+								NavAction = false
+							end)
+						end)
 					end
 				end
 			end
 		end
 	end
+end]]
 
-	local function OpenNavigation()
-		Navigation.Visible = true
-		NavAction = true
-		NavTweenOpen:Play()
-		NavTogglebtnOpen:Play()
+local Children = {}
 
-		Library:tween(TabCover, {BackgroundTransparency = .05})
+local function CloseNavigation()
+	NavAction = true
+	Library:tween(Version, {TextTransparency = 1})
 
-		task.delay(.1, function()
-			Library:tween(NavigationToggle, {Rotation = 90})
-		end)
+	for i,v in pairs(Layout:GetChildren()) do
+		local name = v.Name:lower()
 
-		DragBar.Position = UDim2.new(.325, 0, 0, 0)
-		DragBar.Size = UDim2.new(0, 359, 0, 29)
+		if name:find("template") then
+			continue
+		end
 
-		NavTweenOpen.Completed:Connect(function()
-			Library:tween(Version, {TextTransparency = 0})
+		if v:IsA("TextButton") then
+			Library:tween(v, {BackgroundTransparency = 1})
+			table.insert(Children, v.BackgroundTransparency)
 
-			NavAction = false
+			for x,y in pairs(v:GetChildren()) do
+				if y:IsA("UIStroke") then
+					Library:tween(y, {Transparency = 1})
+					table.insert(Children, y.Transparency)
+				end
 
-			for _,v in pairs(Layout:GetChildren()) do
-				if not string.find(v.Name:lower(), "template") then
-					if v:IsA("TextButton") then
-						Library:tween(v, {BackgroundTransparency = 0})
-						for _,vv in pairs(v:GetChildren()) do
-							if vv:IsA("UIStroke") then
-								Library:tween(vv, {Transparency = 0})
-							elseif vv:IsA("TextButton") then
-								Library:tween(vv, {BackgroundTransparency = 0})
-								Library:tween(vv, {TextTransparency = 0})
-							elseif vv:IsA("ImageLabel") then
-								Library:tween(vv, {ImageTransparency = 0})
-							end
+				if y:IsA("TextButton") then
+					Library:tween(y, {BackgroundTransparency = 1})
+					Library:tween(y, {TextTransparency = 1})
+
+					table.insert(Children, y.BackgroundTransparency)
+					table.insert(Children, y.TextTransparency)
+				end
+
+				if y:IsA("ImageLabel") then
+					Library:tween(y, {ImageTransparency = 1})
+
+					table.insert(Children, y.ImageTransparency)
+				end
+			end
+
+			for index, transparency in pairs(Children) do
+				NavTweenClose:Play()
+				NavTogglebtnClose:Play()
+
+				Library:tween(TabCover, {BackgroundTransparency = 1})
+
+				DragBar.Position = UDim2.new(0.0436863415, 0, 0, 0)
+				DragBar.Size = UDim2.new(0, 510, 0, 29)
+
+				task.delay(.1, function()
+					Library:tween(NavigationToggle, {Rotation = -90})
+				end)
+
+				NavTweenClose.Completed:Connect(function()
+					Navigation.Visible = false
+					NavAction = false
+				end)
+			end
+		end
+	end
+end
+
+local function OpenNavigation()
+	NavAction = true
+	Navigation.Visible = true
+	NavTweenOpen:Play()
+	NavTogglebtnOpen:Play()
+
+	Library:tween(TabCover, {BackgroundTransparency = .05})
+
+	task.delay(.1, function()
+		Library:tween(NavigationToggle, {Rotation = 90})
+	end)
+
+	DragBar.Position = UDim2.new(.325, 0, 0, 0)
+	DragBar.Size = UDim2.new(0, 359, 0, 29)
+	
+	local function Do()
+		for i,v in pairs(Layout:GetChildren()) do
+			local name = v.Name:lower()
+
+			if name:find("template") then
+				continue
+			end
+
+			if v:IsA("TextButton") then
+				Library:tween(v, {BackgroundTransparency = 0})
+
+				for x,y in pairs(v:GetChildren()) do
+					if y:IsA("ImageLabel") then
+						Library:tween(y, {ImageTransparency = 0})
+					end
+
+					if y:IsA("UIStroke") then
+						Library:tween(y, {Transparency = 0})
+					end
+
+					if y:IsA("TextButton") then
+						Library:tween(y, {TextTransparency = 0})
+					end
+				end
+			end
+		end
+	end
+	
+	NavTweenOpen.Completed:Connect(Do)
+	NavAction = false
+end
+
+--[[local function OpenNavigation()
+	Navigation.Visible = true
+	NavTweenOpen:Play()
+	NavTogglebtnOpen:Play()
+
+	Library:tween(TabCover, {BackgroundTransparency = .05})
+
+	task.delay(.1, function()
+		Library:tween(NavigationToggle, {Rotation = 90})
+	end)
+
+	DragBar.Position = UDim2.new(.325, 0, 0, 0)
+	DragBar.Size = UDim2.new(0, 359, 0, 29)
+
+	NavTweenOpen.Completed:Connect(function()
+		Library:tween(Version, {TextTransparency = 0})
+
+		NavAction = false
+
+		for _,v in pairs(Layout:GetChildren()) do
+			if not string.find(v.Name:lower(), "template") then
+				if v:IsA("TextButton") then
+					Library:tween(v, {BackgroundTransparency = 0})
+					for _,vv in pairs(v:GetChildren()) do
+						if vv:IsA("UIStroke") then
+							Library:tween(vv, {Transparency = 0})
+						elseif vv:IsA("TextButton") then
+							Library:tween(vv, {BackgroundTransparency = 0})
+							Library:tween(vv, {TextTransparency = 0})
+						elseif vv:IsA("ImageLabel") then
+							Library:tween(vv, {ImageTransparency = 0})
 						end
 					end
 				end
 			end
-		end)
-	end
+		end
+	end)
+end]]
 
 	UserInputService.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 and NavToggleHover and not NavAction then
@@ -1554,6 +1663,8 @@ function Library:Window(args)
 
 			local ToggleText = RenderedToggle.TextLabelTemplateToggle
 			ToggleText.Text = "  "..args.Text
+
+			RenderedToggle.Size = UDim2.fromOffset(ToggleText.TextBounds.X + 6, 35)
 
 			function Toggle:Toggle(v)
 				if v == nil then
