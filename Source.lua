@@ -490,6 +490,7 @@ function Library:Window(args)
 	TemplateTab.Visible = false
 	TemplateTab.ScrollBarImageColor3 = Color3.fromRGB(11,11,11)
 	TemplateTab.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	TemplateTab.CanvasSize = UDim2.new(0, 0, 4, 0)
 	TemplateTab.ScrollBarThickness = 5
 
 	Holder.Name = "Holder"
