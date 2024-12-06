@@ -265,6 +265,18 @@ function Library:Window(args)
 	local UICorner_2 = Instance.new("UICorner")
 	local SliderValue = Instance.new("TextBox")
 	local UICorner_3 = Instance.new("UICorner")
+	local TemplateDropdown = Instance.new("Frame")
+	local UIStrokeTemplateDropdown = Instance.new("UIStroke")
+	local TextLabelTemplateDropdown = Instance.new("TextLabel")
+	local ActivationTemplateDropdown = Instance.new("Frame")
+	local UICornerTemplateDropdown = Instance.new("UICorner")
+	local TemplateDropdownArrowImageBtn = Instance.new("ImageButton")
+	local DropdownList = Instance.new("Frame")
+	local UICornerDropdownList = Instance.new("UICorner")
+	local DropdownListLayout = Instance.new("UIListLayout")
+	local TemplateDropdownBTN = Instance.new("TextButton")
+	local UICornerDropdownBTM = Instance.new("UICorner")
+	local UIStrokeTemplateDropdownBTN = Instance.new("UIStroke")
 
 	MainFrame.Name = "MainFrame"
 	MainFrame.Parent = ScreenGui
@@ -1009,6 +1021,109 @@ function Library:Window(args)
 	TabCoverUiCorner.Name = "TabCoverUiCorner"
 	TabCoverUiCorner.Parent = TabCover
 
+	TemplateDropdown.Name = "TemplateDropdown"
+	TemplateDropdown.Parent = TemplateTab
+	TemplateDropdown.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	TemplateDropdown.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplateDropdown.BorderSizePixel = 0
+	TemplateDropdown.Position = UDim2.new(1.08560312, 0, 0.240549833, 0)
+	TemplateDropdown.Size = UDim2.new(0, 177, 0, 35)
+	TemplateDropdown.Visible = false
+
+	TextLabelTemplateDropdown.Name = "TextLabelTemplateDropdown"
+	TextLabelTemplateDropdown.Parent = TemplateDropdown
+	TextLabelTemplateDropdown.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabelTemplateDropdown.BackgroundTransparency = 1.000
+	TextLabelTemplateDropdown.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabelTemplateDropdown.BorderSizePixel = 0
+	TextLabelTemplateDropdown.Position = UDim2.new(0, 0, 0.285714298, 0)
+	TextLabelTemplateDropdown.Size = UDim2.new(0, 142, 0, 15)
+	TextLabelTemplateDropdown.Font = Enum.Font.GothamMedium
+	TextLabelTemplateDropdown.Text = "  Dropdown"
+	TextLabelTemplateDropdown.TextColor3 = Color3.fromRGB(200, 200, 200)
+	TextLabelTemplateDropdown.TextSize = 16.000
+	TextLabelTemplateDropdown.TextXAlignment = Enum.TextXAlignment.Left
+
+	ActivationTemplateDropdown.Name = "ActivationTemplateDropdown"
+	ActivationTemplateDropdown.Parent = TemplateDropdown
+	ActivationTemplateDropdown.AnchorPoint = Vector2.new(0.5, 0.5)
+	ActivationTemplateDropdown.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ActivationTemplateDropdown.BackgroundTransparency = 1.000
+	ActivationTemplateDropdown.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ActivationTemplateDropdown.BorderSizePixel = 0
+	ActivationTemplateDropdown.Position = UDim2.new(0.5, 0, 0.5, 0)
+	ActivationTemplateDropdown.Size = UDim2.new(1, 0, 1, 0)
+
+	UICornerTemplateDropdown.CornerRadius = UDim.new(0, 6)
+	UICornerTemplateDropdown.Name = "UICornerTemplateDropdown"
+	UICornerTemplateDropdown.Parent = TemplateDropdown
+
+	TemplateDropdownArrowImageBtn.Name = "TemplateDropdownArrowImageBtn"
+	TemplateDropdownArrowImageBtn.Parent = TemplateDropdown
+	TemplateDropdownArrowImageBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TemplateDropdownArrowImageBtn.BackgroundTransparency = 1.000
+	TemplateDropdownArrowImageBtn.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplateDropdownArrowImageBtn.BorderSizePixel = 0
+	TemplateDropdownArrowImageBtn.Position = UDim2.new(0.836158216, 0, 0.151428576, 0)
+	TemplateDropdownArrowImageBtn.Rotation = 180.000
+	TemplateDropdownArrowImageBtn.Size = UDim2.new(0, 23, 0, 23)
+	TemplateDropdownArrowImageBtn.Image = "rbxassetid://13846892708"
+	TemplateDropdownArrowImageBtn.ImageColor3 = Color3.fromRGB(200, 200, 200)
+
+	DropdownList.Name = "DropdownList"
+	DropdownList.Parent = TemplateDropdown
+	DropdownList.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	DropdownList.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	DropdownList.BorderSizePixel = 0
+	DropdownList.Position = UDim2.new(0, 0, 0.84572273, 0)
+	DropdownList.Size = UDim2.new(0.999000013, 0, 0, 0)
+
+	UICornerDropdownList.CornerRadius = UDim.new(0, 4)
+	UICornerDropdownList.Name = "UICornerDropdownList"
+	UICornerDropdownList.Parent = DropdownList
+
+	DropdownListLayout.Name = "DropdownListLayout"
+	DropdownListLayout.Parent = DropdownList
+	DropdownListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	DropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	DropdownListLayout.Padding = UDim.new(0, 1)
+
+	TemplateDropdownBTN.Name = "TemplateDropdownBTN"
+	TemplateDropdownBTN.Parent = DropdownList
+	TemplateDropdownBTN.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	TemplateDropdownBTN.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplateDropdownBTN.BorderSizePixel = 0
+	TemplateDropdownBTN.Position = UDim2.new(0.00775974197, 0, 0, 0)
+	TemplateDropdownBTN.Size = UDim2.new(0.992240071, 0, 0, 30)
+	TemplateDropdownBTN.Font = Enum.Font.GothamMedium
+	TemplateDropdownBTN.Text = "  Child"
+	TemplateDropdownBTN.TextColor3 = Color3.fromRGB(200, 200, 200)
+	TemplateDropdownBTN.TextSize = 15.000
+	TemplateDropdownBTN.AutoButtonColor = false
+	TemplateDropdownBTN.TextWrapped = true
+	TemplateDropdownBTN.Visible = false
+	TemplateDropdownBTN.TextXAlignment = Enum.TextXAlignment.Left
+	
+	UIStrokeTemplateDropdownBTN.Name = "UIStrokeTemplateDropdownBTN"
+	UIStrokeTemplateDropdownBTN.Parent = TemplateDropdownBTN
+	UIStrokeTemplateDropdownBTN.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	UIStrokeTemplateDropdownBTN.Color = Color3.fromRGB(67,67,67)
+	UIStrokeTemplateDropdownBTN.LineJoinMode = Enum.LineJoinMode.Round
+	UIStrokeTemplateDropdownBTN.Thickness = 1
+	UIStrokeTemplateDropdownBTN.Transparency = 1
+	
+	UIStrokeTemplateDropdown.Name = "UIStrokeTemplateDropdown"
+	UIStrokeTemplateDropdown.Parent = TemplateDropdown
+	UIStrokeTemplateDropdown.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	UIStrokeTemplateDropdown.Color = Color3.fromRGB(67,67,67)
+	UIStrokeTemplateDropdown.LineJoinMode = Enum.LineJoinMode.Round
+	UIStrokeTemplateDropdown.Thickness = 1
+	UIStrokeTemplateDropdown.Transparency = 1
+
+	UICornerDropdownBTM.CornerRadius = UDim.new(0, 4)
+	UICornerDropdownBTM.Name = "UICornerDropdownBTM"
+	UICornerDropdownBTM.Parent = TemplateDropdownBTN
+
 	local ToolTip = Instance.new("Frame")
 	local UICornerToolTip = Instance.new("UICorner")
 	local ToolTipText = Instance.new("TextLabel")
@@ -1664,7 +1779,7 @@ end]]
 			local ToggleText = RenderedToggle.TextLabelTemplateToggle
 			ToggleText.Text = "  "..args.Text
 
-			RenderedToggle.Size = UDim2.fromOffset(ToggleText.TextBounds.X + 20, 35)
+			RenderedToggle.Size = UDim2.fromOffset(ToggleText.TextBounds.X + 50, 35)
 
 			function Toggle:Toggle(v)
 				if v == nil then
@@ -2310,8 +2425,163 @@ end]]
 			}, args or {})
 
 			local Dropdown = {
-				
+				Items = {
+					["id"] = {
+						"value"
+					}
+				},
+				Children = {},
+				Open = false,
+				MouseDown = false,
+				Hover = false,
+				HoveringItem = false,
+				Value = nil
 			}
+
+			local RenderedDropdown = TemplateDropdown:Clone()
+			RenderedDropdown.ZIndex = math.random(5, 99999)
+			local List = RenderedDropdown.DropdownList
+			local RenderedTemplate = List.TemplateDropdownBTN
+			RenderedTemplate.Visible = false
+
+			RenderedDropdown.Parent = TabFrame.Holder
+			RenderedDropdown.TextLabelTemplateDropdown.Text = "  "..args.Text
+			RenderedDropdown.Visible = true
+
+			function Dropdown:SetCallback(func)
+				args.Callback = func
+			end
+
+			function Dropdown:Remove(id)
+				if Dropdown.Items[id] ~= nil then
+					for i,v in pairs(Dropdown.Items[id].instance) do
+						v:Destroy()
+					end
+					Dropdown.Items[id] = nil
+				end
+			end
+
+			function Dropdown:Clear()
+				for i,v in pairs(Dropdown.Items) do
+					v:Remove(i)
+				end
+			end
+
+			function Dropdown:Toggle()
+				if Dropdown.Open then
+					Library:tween(RenderedDropdown.TemplateDropdownArrowImageBtn, {Rotation = 180})
+					
+					for i,v in pairs(Dropdown.Children) do
+						Library:tween(v, {BackgroundTransparency = 1})
+						Library:tween(v, {TextTransparency = 1})
+						
+						v.Visible = false
+					end
+
+					task.wait(.075)
+					Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 0)}, function()
+						List.Visible = false
+						
+						if Dropdown.Hover then
+							Library:tween(RenderedDropdown, {BackgroundColor3 = Color3.fromRGB(53, 53, 53)})
+							Library:tween(RenderedDropdown.UIStrokeTemplateDropdown, {Transparency = 0})
+						end
+					end)		
+				else
+					Library:tween(RenderedDropdown.TemplateDropdownArrowImageBtn, {Rotation = 0})
+					local count = 0
+					for i, v in pairs(Dropdown.Items) do
+						if v ~= nil then
+							count = count + 1
+						end
+					end
+					List.Visible = true
+					
+					Library:tween(RenderedDropdown, {BackgroundColor3 = Color3.fromRGB(48, 48, 48)})
+					Library:tween(RenderedDropdown.UIStrokeTemplateDropdown, {Transparency = 1})
+
+					Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 25 + (count * 25))}, function()
+						for i,v in pairs(Dropdown.Children) do
+							Library:tween(v, {BackgroundTransparency = 0})
+							Library:tween(v, {TextTransparency = 0})
+							v.Visible = true
+						end
+					end)
+				end
+				Dropdown.Open = not Dropdown.Open
+			end
+			
+			function Dropdown:Add(id, value)
+				if Dropdown.Items[id] ~= nil then
+					return
+				end
+				
+				local addedChild = RenderedTemplate:Clone()
+				addedChild.Parent = List
+
+				Dropdown.Items[id] = {
+					instance = {},	
+					value = value
+				}
+				Dropdown.Items[id].instance = addedChild
+
+				Dropdown.Items[id].instance.Visible = false
+				Dropdown.Items[id].instance.BackgroundTransparency = 1
+				Dropdown.Items[id].instance.TextTransparency = 1
+
+				Dropdown.Items[id].instance.Name = id
+				Dropdown.Items[id].instance.Text = " "..value
+
+				addedChild.MouseEnter:Connect(function()
+					Dropdown.HoveringItem = true
+					
+					Library:tween(addedChild, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
+					Library:tween(addedChild.UIStrokeTemplateDropdownBTN, {Transparency = 0})
+				end)
+
+				addedChild.MouseLeave:Connect(function()
+					Dropdown.HoveringItem = false
+					
+					Library:tween(addedChild, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
+					Library:tween(addedChild.UIStrokeTemplateDropdownBTN, {Transparency = 1})
+				end)
+
+				addedChild.Activated:Connect(function()
+					args.Callback(value)
+					Dropdown.Value = value
+					RenderedDropdown.TextLabelTemplateDropdown.Text = "  "..value
+					Dropdown:Toggle()
+				end)
+
+				table.insert(Dropdown.Children, addedChild)
+			end
+			
+			RenderedDropdown.MouseEnter:Connect(function()
+				Dropdown.Hover = true
+				
+				Library:tween(RenderedDropdown.TemplateDropdownArrowImageBtn, {ImageColor3 = Color3.fromRGB(255,255,255)})
+				Library:tween(RenderedDropdown.TextLabelTemplateDropdown, {TextColor3 = Color3.fromRGB(255,255,255)})
+				
+				if not Dropdown.Open then
+					Library:tween(RenderedDropdown, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
+					Library:tween(RenderedDropdown.UIStrokeTemplateDropdown, {Transparency = 0})
+				end
+			end)
+			
+			RenderedDropdown.MouseLeave:Connect(function()
+				Dropdown.Hover = false
+				
+				Library:tween(RenderedDropdown.TemplateDropdownArrowImageBtn, {ImageColor3 = Color3.fromRGB(200,200,200)})
+				Library:tween(RenderedDropdown.TextLabelTemplateDropdown, {TextColor3 = Color3.fromRGB(200,200,200)})
+				Library:tween(RenderedDropdown, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
+				Library:tween(RenderedDropdown.UIStrokeTemplateDropdown, {Transparency = 1})
+			end)
+			
+			UserInputService.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 and Dropdown.Hover then
+					Dropdown:Toggle()
+				end
+			end)
 
 			return Dropdown
 		end
