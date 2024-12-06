@@ -1728,7 +1728,7 @@ end]]
 			local ButtonText = RenderedButton.TextLabelTemplateButton
 			ButtonText.Text = "  "..args.Text
 
-			RenderedButton.Size = UDim2.fromOffset(ButtonText.TextBounds.X + 6, 35)
+			RenderedButton.Size = UDim2.fromOffset(ButtonText.TextBounds.X + 9, 35)
 
 			RenderedButton.ButtonImage.Image = args.Icon
 
@@ -2556,13 +2556,23 @@ end]]
 					Library:tween(RenderedDropdown, {BackgroundColor3 = Color3.fromRGB(48, 48, 48)})
 					Library:tween(RenderedDropdown.UIStrokeTemplateDropdown, {Transparency = 1})
 
-					Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 25 + (count * 25) + 5)}, function()
-						for i,v in pairs(Dropdown.Children) do
-							Library:tween(v, {BackgroundTransparency = 0})
-							Library:tween(v, {TextTransparency = 0})
-							v.Visible = true
-						end
-					end)
+					if count <= 9 then
+						Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 25 + (count * 25))}, function()
+							for i,v in pairs(Dropdown.Children) do
+								Library:tween(v, {BackgroundTransparency = 0})
+								Library:tween(v, {TextTransparency = 0})
+								v.Visible = true
+							end
+						end)
+					elseif count >= 10 then
+						Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 25 + (count * 25) + 10)}, function()
+							for i,v in pairs(Dropdown.Children) do
+								Library:tween(v, {BackgroundTransparency = 0})
+								Library:tween(v, {TextTransparency = 0})
+								v.Visible = true
+							end
+						end)
+					end
 				end
 				Dropdown.Open = not Dropdown.Open
 			end
