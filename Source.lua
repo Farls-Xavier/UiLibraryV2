@@ -2495,7 +2495,7 @@ end]]
 			}
 
 			local RenderedDropdown = TemplateDropdown:Clone()
-			RenderedDropdown.ZIndex = math.random(args.Floor, 99999)
+			RenderedDropdown.ZIndex = args.Floor
 			local List = RenderedDropdown.DropdownList
 			local RenderedTemplate = List.TemplateDropdownBTN
 			RenderedTemplate.Visible = false
@@ -2556,7 +2556,7 @@ end]]
 					Library:tween(RenderedDropdown, {BackgroundColor3 = Color3.fromRGB(48, 48, 48)})
 					Library:tween(RenderedDropdown.UIStrokeTemplateDropdown, {Transparency = 1})
 
-					Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 25 + (count * 25))}, function()
+					Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 25 + (count * 25) + 5)}, function()
 						for i,v in pairs(Dropdown.Children) do
 							Library:tween(v, {BackgroundTransparency = 0})
 							Library:tween(v, {TextTransparency = 0})
