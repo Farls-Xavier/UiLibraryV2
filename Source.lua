@@ -2475,6 +2475,7 @@ end]]
 		function Tab:Dropdown(args)
 			args = Library:Validate({
 				Text = "Dropdown",
+				Floor = 5,
 				Callback = function(v) end,
 				Items = {}
 			}, args or {})
@@ -2494,7 +2495,7 @@ end]]
 			}
 
 			local RenderedDropdown = TemplateDropdown:Clone()
-			RenderedDropdown.ZIndex = math.random(5, 99999)
+			RenderedDropdown.ZIndex = args.Floor
 			local List = RenderedDropdown.DropdownList
 			local RenderedTemplate = List.TemplateDropdownBTN
 			RenderedTemplate.Visible = false
@@ -2502,6 +2503,13 @@ end]]
 			RenderedDropdown.Parent = TabFrame.Holder
 			RenderedDropdown.TextLabelTemplateDropdown.Text = "  "..args.Text
 			RenderedDropdown.Visible = true
+
+			local function TypeWrite(textItem, text)
+				for i = 1, #text, 1 do
+					textItem.Text = string.sub(text, 1, i)
+					task.wait(0.03)
+				end
+			end
 
 			function Dropdown:SetCallback(func)
 				args.Callback = func
@@ -2614,8 +2622,9 @@ end]]
 				addedChild.Activated:Connect(function()
 					args.Callback(value)
 					Dropdown.Value = value
-					RenderedDropdown.TextLabelTemplateDropdown.Text = "  "..value
+					--RenderedDropdown.TextLabelTemplateDropdown.Text = "  "..value
 					Dropdown:Toggle()
+					TypeWrite(RenderedDropdown.TextLabelTemplateDropdown, "  "..value) -- sooo fancy :sob: kill me
 				end)
 
 				table.insert(Dropdown.Children, addedChild)
