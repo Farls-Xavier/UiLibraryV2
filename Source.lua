@@ -277,6 +277,12 @@ function Library:Window(args)
 	local TemplateDropdownBTN = Instance.new("TextButton")
 	local UICornerDropdownBTM = Instance.new("UICorner")
 	local UIStrokeTemplateDropdownBTN = Instance.new("UIStroke")
+	local TemplateTextBox = Instance.new("Frame")
+	local UICornerTemplateTextBox = Instance.new("UICorner")
+	local TemplateTextBoxHolder = Instance.new("Frame")
+	local TemplateTextBoxTB = Instance.new("TextBox")
+	local UICornerTemplateTextBoxTB = Instance.new("UICorner")
+	local UIStrokeTemplateTextBox = Instance.new("UIStroke")
 
 	MainFrame.Name = "MainFrame"
 	MainFrame.Parent = ScreenGui
@@ -1123,6 +1129,53 @@ function Library:Window(args)
 	UICornerDropdownBTM.CornerRadius = UDim.new(0, 4)
 	UICornerDropdownBTM.Name = "UICornerDropdownBTM"
 	UICornerDropdownBTM.Parent = TemplateDropdownBTN
+
+	TemplateTextBox.Name = "TemplateTextBox"
+	TemplateTextBox.Parent = TemplateTab
+	TemplateTextBox.Visible = false
+	TemplateTextBox.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	TemplateTextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplateTextBox.BorderSizePixel = 0
+	TemplateTextBox.Position = UDim2.new(0, 0, 0.388316154, 0)
+	TemplateTextBox.Size = UDim2.new(0, 125, 0, 35)
+
+	UICornerTemplateTextBox.CornerRadius = UDim.new(0, 6)
+	UICornerTemplateTextBox.Name = "UICornerTemplateTextBox"
+	UICornerTemplateTextBox.Parent = TemplateTextBox
+
+	TemplateTextBoxHolder.Name = "TemplateTextBoxHolder"
+	TemplateTextBoxHolder.Parent = TemplateTextBox
+	TemplateTextBoxHolder.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	TemplateTextBoxHolder.BackgroundTransparency = 1.000
+	TemplateTextBoxHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplateTextBoxHolder.BorderSizePixel = 0
+	TemplateTextBoxHolder.Size = UDim2.new(1, 0, 1, 0)
+
+	TemplateTextBoxTB.Name = "TemplateTextBoxTB"
+	TemplateTextBoxTB.Parent = TemplateTextBoxHolder
+	TemplateTextBoxTB.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	TemplateTextBoxTB.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemplateTextBoxTB.BorderSizePixel = 0
+	TemplateTextBoxTB.Position = UDim2.new(0.0560000017, 0, 0, 0)
+	TemplateTextBoxTB.Size = UDim2.new(0.802998781, 0, 1, 0)
+	TemplateTextBoxTB.Font = Enum.Font.Gotham
+	TemplateTextBoxTB.PlaceholderColor3 = Color3.fromRGB(100, 100, 100)
+	TemplateTextBoxTB.PlaceholderText = "Text here..."
+	TemplateTextBoxTB.Text = ""
+	TemplateTextBoxTB.TextColor3 = Color3.fromRGB(200, 200, 200)
+	TemplateTextBoxTB.TextSize = 15.000
+	TemplateTextBoxTB.TextXAlignment = Enum.TextXAlignment.Left
+
+	UICornerTemplateTextBoxTB.CornerRadius = UDim.new(0, 6)
+	UICornerTemplateTextBoxTB.Name = "UICornerTemplateTextBoxTB"
+	UICornerTemplateTextBoxTB.Parent = TemplateTextBoxTB
+
+	UIStrokeTemplateTextBox.Name = "UIStrokeTemplateTextBox"
+	UIStrokeTemplateTextBox.Parent = TemplateTextBox
+	UIStrokeTemplateTextBox.Color = Color3.fromRGB(67, 67, 67)
+	UIStrokeTemplateTextBox.LineJoinMode = Enum.LineJoinMode.Round
+	UIStrokeTemplateTextBox.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	UIStrokeTemplateTextBox.Transparency = 1
 
 	local ToolTip = Instance.new("Frame")
 	local UICornerToolTip = Instance.new("UICorner")
@@ -2584,6 +2637,65 @@ end]]
 			end)
 
 			return Dropdown
+		end
+
+		function Tab:TextBox(args)
+			args = Library:Validate({
+				PlaceholderText = "Text here...",
+				Callback = function(v) end,
+			}, args or {})
+
+			local TextBox = {
+				Hover = false,
+				Connection = nil,
+				Text = ""
+			}
+			
+			local function TypeWrite(textItem, text)
+				for i = 1, #text, 1 do
+					textItem.PlaceholderText = string.sub(text, 1, i)
+					task.wait(0.03)
+				end
+			end
+
+			local RenderedTextBox = TemplateTextBox:Clone()
+			local Text : TextBox = RenderedTextBox.TemplateTextBoxHolder.TemplateTextBoxTB
+			Text.BackgroundTransparency = 1
+			Text.PlaceholderText = args.PlaceholderText
+			RenderedTextBox.Parent = TabFrame.Holder
+			RenderedTextBox.Visible = true
+
+			RenderedTextBox.MouseEnter:Connect(function()
+				TextBox.Hover = true
+
+				Library:tween(RenderedTextBox, {BackgroundColor3 = Color3.fromRGB(53,53,53)})
+				Library:tween(RenderedTextBox.UIStrokeTemplateTextBox, {Transparency = 0})
+			end)
+
+			RenderedTextBox.MouseLeave:Connect(function()
+				TextBox.Hover = false
+
+				Library:tween(RenderedTextBox, {BackgroundColor3 = Color3.fromRGB(48,48,48)})
+				Library:tween(RenderedTextBox.UIStrokeTemplateTextBox, {Transparency = 1})
+			end)
+			
+			Text.Focused:Connect(function()
+				Text.PlaceholderText = ''
+				Library:tween(RenderedTextBox, {Size = UDim2.fromOffset(TemplateTextBox.Size.X.Offset, 35)}, function()
+					TypeWrite(Text, args.PlaceholderText)
+				end)
+			end)
+			
+			Text.FocusLost:Connect(function(enterPressed)				
+				if #Text.Text >= 1 then
+					Library:tween(RenderedTextBox, {Size = UDim2.fromOffset(Text.TextBounds.X + #Text.Text, 35)})
+				else
+					Text.Text = ""
+				end
+				TextBox.Text = Text.Text
+			end)
+			
+			return TextBox
 		end
 		
 		function Tab:Player(args)
