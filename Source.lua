@@ -2476,7 +2476,6 @@ end]]
 			args = Library:Validate({
 				Text = "Dropdown",
 				Callback = function(v) end,
-				Floor = 5,
 				Items = {}
 			}, args or {})
 
@@ -2495,7 +2494,7 @@ end]]
 			}
 
 			local RenderedDropdown = TemplateDropdown:Clone()
-			RenderedDropdown.ZIndex = args.Floor
+			RenderedDropdown.ZIndex = math.random(5, 99999)
 			local List = RenderedDropdown.DropdownList
 			local RenderedTemplate = List.TemplateDropdownBTN
 			RenderedTemplate.Visible = false
@@ -2556,16 +2555,16 @@ end]]
 					Library:tween(RenderedDropdown, {BackgroundColor3 = Color3.fromRGB(48, 48, 48)})
 					Library:tween(RenderedDropdown.UIStrokeTemplateDropdown, {Transparency = 1})
 
-					if count <= 9 then
-						Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 25 + (count * 25))}, function()
+					if count <= 10 then
+						Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 25 + (count * 25) + count)}, function()
 							for i,v in pairs(Dropdown.Children) do
 								Library:tween(v, {BackgroundTransparency = 0})
 								Library:tween(v, {TextTransparency = 0})
 								v.Visible = true
 							end
 						end)
-					elseif count >= 10 then
-						Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 25 + (count * 25) + 10)}, function()
+					elseif count >= 11 then
+						Library:tween(List, {Size = UDim2.new(0.999000013, 0, 0, 25 + (count * 25) + count + 50)}, function()
 							for i,v in pairs(Dropdown.Children) do
 								Library:tween(v, {BackgroundTransparency = 0})
 								Library:tween(v, {TextTransparency = 0})
