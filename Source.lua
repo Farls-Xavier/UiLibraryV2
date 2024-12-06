@@ -2474,6 +2474,7 @@ end]]
 			args = Library:Validate({
 				Text = "Dropdown",
 				Callback = function(v) end,
+				Floor = 5,
 				Items = {}
 			}, args or {})
 
@@ -2492,7 +2493,7 @@ end]]
 			}
 
 			local RenderedDropdown = TemplateDropdown:Clone()
-			RenderedDropdown.ZIndex = math.random(5, 99999)
+			RenderedDropdown.ZIndex = math.random(args.Floor, 99999)
 			local List = RenderedDropdown.DropdownList
 			local RenderedTemplate = List.TemplateDropdownBTN
 			RenderedTemplate.Visible = false
