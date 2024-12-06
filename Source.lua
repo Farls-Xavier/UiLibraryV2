@@ -1664,7 +1664,7 @@ end]]
 			local ToggleText = RenderedToggle.TextLabelTemplateToggle
 			ToggleText.Text = "  "..args.Text
 
-			RenderedToggle.Size = UDim2.fromOffset(ToggleText.TextBounds.X + 6, 35)
+			RenderedToggle.Size = UDim2.fromOffset(ToggleText.TextBounds.X + 20, 35)
 
 			function Toggle:Toggle(v)
 				if v == nil then
